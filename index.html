@@ -44,34 +44,79 @@
   }
   @keyframes twinkle { from{opacity:.15;transform:scale(.8)} to{opacity:1;transform:scale(1.3)} }
 
-  .divider {
-    position: fixed;
-    left: 50%; top: 0; bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom,
-      transparent 0%,
-      rgba(255,255,255,.15) 20%,
-      rgba(255,255,255,.28) 50%,
-      rgba(255,255,255,.15) 80%,
-      transparent 100%);
-    z-index: 2;
+  /* ── LANDSCAPE: left | right ── */
+  @media (orientation: landscape) {
+    .layout {
+      position: fixed; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      z-index: 1;
+    }
+    .left {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(4px, 1.5vh, 20px);
+      padding: clamp(6px,1.5vh,24px) 3vw;
+      overflow-y: auto;
+    }
+    .right {
+      display: flex; flex-direction: column;
+      padding: 2vh 2vw 2vh 2.2vw;
+      gap: 1vh; overflow: hidden;
+      border-left: 2px solid rgba(255,255,255,.12);
+    }
+    .col-head   { font-size: clamp(14px,2.8vw,42px); padding:.65vh .2vw; border-radius:12px; }
+    .col-headers{ gap: .45vw; }
+    .num-grid   { gap: .35vw .4vw; }
+    .num-cell   { font-size: clamp(9px,1.35vw,20px); border-radius:7px; }
+    .logo-letter{ font-size:clamp(18px,3.5vw,60px); width:clamp(26px,4.5vw,70px); height:clamp(26px,4.5vw,70px); }
+    .logo-exclaim{ font-size:clamp(16px,3.2vw,54px); }
+    .logo       { gap:.55vw; }
+    .stage-card { width:94%; }
+    .recent-strip{ width:94%; min-height:0; }
+    .draw-btn   { font-size:clamp(14px,2.5vw,34px); padding:clamp(8px,1.2vh,18px) clamp(24px,4vw,60px); }
+    .logo-hint  { font-size:clamp(8px,1vw,13px); margin-top:-2px; }
   }
 
-  .layout {
-    position: fixed; inset: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    z-index: 1;
-  }
-
-  /* ═══════════════ LEFT ═══════════════ */
-  .left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2vh;
-    padding: 2.5vh 3vw;
+  /* ── PORTRAIT: top / bottom ── */
+  @media (orientation: portrait) {
+    .layout {
+      position: fixed; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
+      z-index: 1;
+    }
+    .left {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(4px, 1vh, 16px);
+      padding: clamp(6px,1.5vh,20px) 4vw clamp(4px,1vh,16px);
+      overflow-y: auto;
+      border-bottom: 2px solid rgba(255,255,255,.12);
+    }
+    .right {
+      display: flex; flex-direction: column;
+      padding: 1.5vh 3vw 2vh;
+      gap: .8vh; overflow: hidden;
+    }
+    .col-head   { font-size:clamp(14px,4.5vw,36px); padding:.5vh .2vw; border-radius:10px; }
+    .col-headers{ gap:.6vw; }
+    .num-grid   { gap:.4vh .6vw; }
+    .num-cell   { font-size:clamp(9px,2.2vw,18px); border-radius:6px; }
+    .logo-letter{ font-size:clamp(16px,5vw,48px); width:clamp(22px,6vw,58px); height:clamp(22px,6vw,58px); }
+    .logo-exclaim{ font-size:clamp(14px,4.5vw,44px); }
+    .logo       { gap:1vw; }
+    .stage-card { width:96%; padding:clamp(6px,1.5vh,20px) 4vw; }
+    .cur-letter { height:clamp(18px,min(3.5vh,4vw),48px); font-size:clamp(14px,min(3.5vh,4vw),48px); }
+    .cur-number { font-size:clamp(50px,min(14vh,16vw),200px); }
+    .recent-strip{ width:96%; min-height:0; gap:1.2vw; }
+    .rec-chip   { width:clamp(22px,5vw,44px); height:clamp(22px,5vw,44px); font-size:clamp(10px,2vw,16px); }
+    .draw-btn   { font-size:clamp(13px,3.5vw,28px); padding:clamp(6px,1.2vh,14px) clamp(22px,7vw,52px); }
+    .counter-pill{ font-size:clamp(11px,2.5vw,16px); }
+    .reset-btn  { font-size:clamp(10px,2vw,14px); }
+    .logo-hint  { font-size:clamp(7px,1.6vw,12px); }
   }
 
   .logo {
@@ -109,10 +154,12 @@
   .stage-card {
     position: relative;
     width: 94%;
+    flex-shrink: 1;
+    min-height: 0;
     background: rgba(255,255,255,.06);
     border: 2px solid rgba(255,255,255,.1);
     border-radius: 30px;
-    padding: 3.5vh 2vw 3vh;
+    padding: clamp(8px,2vh,28px) 2vw clamp(8px,2vh,24px);
     text-align: center;
     backdrop-filter: blur(12px);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 20px 55px rgba(0,0,0,.45);
@@ -129,9 +176,9 @@
 
   .cur-letter {
     font-family:'Lilita One',cursive;
-    font-size: clamp(22px, 4vw, 56px);
+    font-size: clamp(16px, min(4vw, 5vh), 56px);
     letter-spacing: 4px;
-    height: clamp(28px, 4.5vw, 64px);
+    height: clamp(20px, min(4.5vw, 6vh), 64px);
     display:flex; align-items:center; justify-content:center;
     opacity:0; transform:translateY(8px);
   }
@@ -140,7 +187,7 @@
 
   .cur-number {
     font-family:'Lilita One',cursive;
-    font-size: clamp(90px, 20vw, 240px);
+    font-size: clamp(60px, min(18vw, 28vh), 240px);
     line-height: 1;
     color: white;
     opacity: 0;
@@ -273,45 +320,29 @@
   .reset-btn:hover{background:rgba(255,255,255,.18);color:white;}
   .btn-row{display:flex;gap:10px;align-items:center;}
 
-  /* ═══════════════ RIGHT ═══════════════ */
-  .right {
-    display: flex;
-    flex-direction: column;
-    padding: 2vh 2vw 2vh 2.2vw;
-    gap: 1vh;
-    overflow: hidden;
+  /* ═══════════════ RIGHT panel base ═══════════════ */
+  .col-head {
+    font-family:'Lilita One',cursive;
+    text-align:center; color:white;
+    text-shadow:0 2px 0 rgba(0,0,0,.3);
   }
-
   .col-headers {
     display: grid;
     grid-template-columns: repeat(5,1fr);
-    gap: .45vw;
     flex-shrink: 0;
   }
-  .col-head {
-    font-family:'Lilita One',cursive;
-    font-size:clamp(16px,2.8vw,42px);
-    text-align:center;
-    padding:.65vh .2vw;
-    border-radius:12px;
-    color:white;
-    text-shadow:0 2px 0 rgba(0,0,0,.3);
+  .num-grid {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(15,1fr);
+    flex: 1;
+    min-height: 0;
   }
   .col-head.b{background:linear-gradient(135deg,#FF3D9A,#ff6eb5);box-shadow:0 4px 0 #b01060}
   .col-head.i{background:linear-gradient(135deg,#FF8C00,#ffc04d);box-shadow:0 4px 0 #b05e00}
   .col-head.n{background:linear-gradient(135deg,#00C853,#5dff99);box-shadow:0 4px 0 #008035}
   .col-head.g{background:linear-gradient(135deg,#00B4FF,#66d9ff);box-shadow:0 4px 0 #007aaf}
   .col-head.o{background:linear-gradient(135deg,#9B59FF,#c29bff);box-shadow:0 4px 0 #6a2ebf}
-
-  .num-grid {
-    display: grid;
-    grid-template-columns: repeat(5,1fr);
-    grid-template-rows: repeat(15,1fr);
-    gap: .35vw .4vw;
-    flex: 1;
-    min-height: 0;
-  }
-
   .num-cell {
     font-family:'Fredoka One',cursive;
     font-size:clamp(9px,1.35vw,20px);
@@ -384,6 +415,109 @@
   }
   .finished-btn:hover{transform:translateY(-3px);box-shadow:0 9px 0 rgba(0,0,0,.3),0 0 50px rgba(255,61,154,.6)}
 
+  /* ── CONGRATULATIONS overlay ── */
+  .congrats-overlay {
+    position: fixed; inset: 0; z-index: 400;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: clamp(8px, 2.5vh, 32px);
+    padding: 4vmin 5vmin;
+    background: rgba(0,0,0,.0);
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    transition: background .4s ease, opacity .4s ease;
+  }
+  .congrats-overlay.show {
+    background: rgba(5,0,20,.82);
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(6px);
+  }
+
+  .congrats-word {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(24px, min(9vw, 13vh), 140px);
+    letter-spacing: clamp(1px, .4vw, 5px);
+    text-align: center;
+    line-height: 1.1;
+    width: 100%;
+    word-break: break-word;
+    opacity: 0;
+    transform: scale(0.2) rotate(-8deg);
+    background: linear-gradient(135deg, #FFD700, #FF3D9A, #00B4FF, #00C853, #9B59FF, #FFD700);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(255,215,0,.6));
+    animation: none;
+  }
+  .congrats-overlay.show .congrats-word {
+    animation: congratsReveal .8s cubic-bezier(.34,1.56,.64,1) .1s forwards,
+               rainbowShift 3s linear infinite;
+  }
+  @keyframes congratsReveal {
+    0%   { opacity:0; transform:scale(.2) rotate(-8deg); }
+    60%  { opacity:1; transform:scale(1.06) rotate(2deg); }
+    80%  {            transform:scale(.97) rotate(-1deg); }
+    100% { opacity:1; transform:scale(1) rotate(0); }
+  }
+  @keyframes rainbowShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .congrats-sub {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(12px, min(2.5vw, 4vh), 40px);
+    color: rgba(255,255,255,.85);
+    letter-spacing: 2px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .congrats-overlay.show .congrats-sub {
+    animation: subSlide .6s ease .55s forwards;
+  }
+  @keyframes subSlide {
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .congrats-close-btn {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(12px, min(1.8vw, 2.5vh), 22px);
+    color: white;
+    background: rgba(255,255,255,.12);
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 50px;
+    padding: clamp(8px,1.2vh,14px) clamp(20px,3vw,36px);
+    cursor: pointer;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .congrats-overlay.show .congrats-close-btn {
+    animation: subSlide .6s ease .85s forwards;
+  }
+  .congrats-close-btn:hover { background:rgba(255,255,255,.25); border-color:white; }
+
+  /* Logo clickable hint */
+  .logo { cursor: pointer; }
+  .logo:hover .logo-letter { filter: brightness(1.2); }
+  .logo-hint {
+    font-size: clamp(9px, 1.1vw, 13px);
+    color: rgba(255,255,255,.3);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: -6px;
+    animation: hintPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes hintPulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+
   /* Reset modal */
   .reset-modal {
     position:fixed;inset:0;z-index:300;
@@ -449,13 +583,18 @@
   </div>
 </div>
 
-<div class="divider"></div>
+<!-- CONGRATULATIONS overlay -->
+<div class="congrats-overlay" id="congratsOverlay">
+  <div class="congrats-word">CONGRATULATIONS!</div>
+  <div class="congrats-sub">🎊 WE HAVE A WINNER! 🎊</div>
+  <button class="congrats-close-btn" onclick="hideCongrats()">✕ CLOSE</button>
+</div>
 
 <div class="layout">
 
   <!-- LEFT -->
   <div class="left">
-    <div class="logo">
+    <div class="logo" onclick="showCongrats()" title="BINGO!">
       <div class="logo-letter b">B</div>
       <div class="logo-letter i">I</div>
       <div class="logo-letter n">N</div>
@@ -463,6 +602,7 @@
       <div class="logo-letter o">O</div>
       <div class="logo-exclaim">!</div>
     </div>
+    <div class="logo-hint">👆 TAP WHEN SOMEONE GETS BINGO!</div>
 
     <div class="stage-card" id="stageCard">
       <div class="cur-letter" id="curLetter"></div>
@@ -684,13 +824,20 @@ function markCell(n,animate){
 function renderRecent(){
   const strip=document.getElementById('recentStrip');
   strip.innerHTML='';
-  called.slice(-10).reverse().forEach((n,i)=>{
+  const recent=called.slice(-5).reverse();
+  recent.forEach((n,i)=>{
     const cls=LETTER_COLOR[letterFor(n)];
     const el=document.createElement('div');
     el.className=`rec-chip ${cls}${i===0?' newest':''}`;
     el.textContent=n;
     strip.appendChild(el);
   });
+  if(called.length>5){
+    const dots=document.createElement('div');
+    dots.style.cssText='font-family:"Fredoka One",cursive;font-size:clamp(14px,2vw,22px);color:rgba(255,255,255,.4);letter-spacing:2px;align-self:center;';
+    dots.textContent='…';
+    strip.appendChild(dots);
+  }
 }
 
 function drawNumber(){
@@ -848,6 +995,22 @@ function confetti(base,count=65){
     layer.appendChild(p);
     setTimeout(()=>p.remove(),(dur+del)*1000+200);
   }
+}
+
+function showCongrats(){
+  const ov   = document.getElementById('congratsOverlay');
+  const word = ov.querySelector('.congrats-word');
+  const sub  = ov.querySelector('.congrats-sub');
+  const btn  = ov.querySelector('.congrats-close-btn');
+  // Reset animations so they replay each time
+  [word, sub, btn].forEach(el => { el.style.animation='none'; void el.offsetWidth; el.style.animation=''; });
+  ov.classList.add('show');
+  confetti('#FFD700',120); confetti('#FF3D9A',80);
+  confetti('#00B4FF',80);  confetti('#9B59FF',60);
+  playFinale();
+}
+function hideCongrats(){
+  document.getElementById('congratsOverlay').classList.remove('show');
 }
 
 function confirmReset(){
