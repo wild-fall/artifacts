@@ -334,7 +334,7 @@
     justify-content: center;
     position: relative;
     overflow: visible;
-    border: 5px solid rgba(255,255,255,0.65);
+    border: 7px solid rgba(255,255,255,0.80);
   }
 
   /* The colored circle bg sits behind, clipped to circle */
@@ -357,9 +357,19 @@
     z-index: 1;
     pointer-events: none;
   }
+  /* Dot pattern overlay */
+  .p-card-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
+    z-index: 2;
+    pointer-events: none;
+  }
 
   .p-card-xl .p-card-inner {
-    border-width: 12px;
+    border-width: 22px;
   }
 
 
@@ -370,6 +380,8 @@
     line-height: 1;
     color: white;
     text-shadow: none;
+    -webkit-text-stroke: 3px rgba(255,255,255,0.45);
+    paint-order: stroke fill;
     z-index: 2;
     position: relative;
   }
@@ -381,6 +393,8 @@
     line-height: 1;
     color: white;
     text-shadow: none;
+    -webkit-text-stroke: 10px rgba(255,255,255,0.40);
+    paint-order: stroke fill;
     z-index: 2;
     position: relative;
   }
@@ -451,14 +465,14 @@
 
 <script>
   const COLORS = [
-    { id:'pink',   label:'ピンク',  g:['#ff8ecb','#ff1a75'], sh:'#b5004e' },
-    { id:'orange', label:'オレンジ',g:['#ffd06b','#ff8800'], sh:'#b55e00' },
-    { id:'green',  label:'グリーン',g:['#8fef5a','#2db81b'], sh:'#198a10' },
-    { id:'blue',   label:'ブルー',  g:['#60dbff','#0099d8'], sh:'#006fa0' },
-    { id:'purple', label:'パープル',g:['#d98fff','#9b20e8'], sh:'#6910b0' },
-    { id:'yellow', label:'イエロー',g:['#fff176','#ffc200'], sh:'#c08800' },
-    { id:'red',    label:'レッド',  g:['#ff7a7a','#e81010'], sh:'#a00000' },
-    { id:'teal',   label:'ティール',g:['#5dffe0','#00b894'], sh:'#007a63' },
+    { id:'pink',   label:'ピンク',  g:['#ffadd6','#f50073'], sh:'#b5004e' },
+    { id:'orange', label:'オレンジ',g:['#ffe08a','#ff6a00'], sh:'#b55e00' },
+    { id:'green',  label:'グリーン',g:['#aaff66','#1dbf00'], sh:'#198a10' },
+    { id:'blue',   label:'ブルー',  g:['#7de8ff','#007bce'], sh:'#006fa0' },
+    { id:'purple', label:'パープル',g:['#e5aaff','#8800e0'], sh:'#6910b0' },
+    { id:'yellow', label:'イエロー',g:['#fff59a','#f5a800'], sh:'#c08800' },
+    { id:'red',    label:'レッド',  g:['#ff9999','#e50000'], sh:'#a00000' },
+    { id:'teal',   label:'ティール',g:['#80ffdf','#00a87a'], sh:'#007a63' },
   ];
 
   // Shape SVG generators — all centered at 0,0 in a size×size viewBox
