@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>入学おめでとう！壁面飾りメーカー</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f0ff;
+    --accent: #7c3aed;
+    --accent2: #ec4899;
+    --text: #2d1b6e;
+    --gray: #9ca3af;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: white;
+    text-align: center;
+    padding: 18px 20px 14px;
+  }
+  header h1 { font-size: 20px; font-weight: 900; letter-spacing: 2px; }
+  header p  { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+  /* ===== EDITOR ===== */
+  .editor {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: linear-gradient(#7c3aed, #ec4899);
+    border-radius: 2px;
+  }
+
+  .input-row {
+    background: white;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 16px rgba(124,58,237,0.1);
+    margin-bottom: 20px;
+  }
+
+  .text-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .text-input-wrap input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    padding: 10px 16px;
+    border: 3px solid #e9d5ff;
+    border-radius: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .text-input-wrap input[type="text"]:focus { border-color: var(--accent); }
+
+  .btn-apply {
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+    transition: transform .1s;
+    white-space: nowrap;
+  }
+  .btn-apply:active { transform: translateY(2px); }
+
+  .cards-editor {
+    background: white;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 16px rgba(124,58,237,0.1);
+    margin-bottom: 20px;
+  }
+
+  .card-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ede9fe;
+    flex-wrap: wrap;
+  }
+  .card-row:last-child { border-bottom: none; }
+
+  .card-num {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: white;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .char-display {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.18), 0 6px 14px rgba(0,0,0,0.15);
+    border: 3px solid rgba(255,255,255,0.6);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.2);
+  }
+  .char-display::before {
+    content: '';
+    position: absolute;
+    width: 60%; height: 45%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, transparent 80%);
+    top: 8%; left: 12%;
+  }
+
+  .color-swatches {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .swatch {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform .15s, border-color .15s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .swatch:hover { transform: scale(1.2); }
+  .swatch.active {
+    border-color: var(--text);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--text);
+  }
+
+  /* A4 full print button per card */
+  .btn-full {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #b91c1c, 0 5px 12px rgba(239,68,68,0.3);
+    transition: transform .1s, box-shadow .1s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .btn-full:active { transform: translateY(2px); box-shadow: 0 1px 0 #b91c1c; }
+
+  /* Print buttons row */
+  .print-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .btn-print {
+    flex: 1;
+    min-width: 200px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(5,150,105,0.3);
+    transition: transform .1s, box-shadow .1s;
+    letter-spacing: 1px;
+  }
+  .btn-print:active { transform: translateY(4px); box-shadow: 0 2px 0 #047857; }
+
+  /* ===== PREVIEW LABEL ===== */
+  .preview-label {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+
+  /* ===== MULTI-CARD PRINT PAGE ===== */
+  #printPageMulti {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 0 auto 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+    gap: 6mm;
+    padding: 10mm 8mm;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  }
+
+  /* ===== FULL A4 PRINT PAGE ===== */
+  #printPageFull {
+    width: 210mm;
+    height: 297mm;
+    background: white;
+    margin: 0 auto 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  }
+
+  /* Hide full page in screen by default */
+  #printPageFull { display: none; }
+
+  /* Force square aspect on the full card wrapper */
+  #printPageFull > .p-card-xl-wrap {
+    width: 192mm;
+    height: 192mm;
+    flex-shrink: 0;
+  }
+
+  .preview-sep {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray);
+    margin: 16px 0 8px;
+  }
+
+  /* ===== CARD SHARED STYLES ===== */
+  .p-card {
+    width: 62mm;
+    height: 62mm;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: 2.5px dashed rgba(0,0,0,0.22);
+    outline-offset: 5px;
+    position: relative;
+  }
+
+  /* Full-page circle: strictly square so border-radius:50% = perfect circle */
+  .p-card-xl {
+    width: 192mm;
+    height: 192mm;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: 3px dashed rgba(0,0,0,0.2);
+    outline-offset: 8px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .p-card-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+    border: 5px solid rgba(255,255,255,0.65);
+  }
+
+  /* The colored circle bg sits behind, clipped to circle */
+  .p-card-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  /* Shine goes inside bg */
+  .p-card-bg::before {
+    content: '';
+    position: absolute;
+    width: 55%; height: 40%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 80%);
+    top: 8%; left: 14%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .p-card-xl .p-card-inner {
+    border-width: 12px;
+  }
+
+
+
+  .p-char {
+    font-size: 80pt;
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+    text-shadow:
+      3px 3px 0 rgba(255,255,255,0.5),
+      -1px -1px 0 rgba(0,0,0,0.08),
+      4px 8px 0 rgba(0,0,0,0.3),
+      6px 14px 18px rgba(0,0,0,0.22);
+    z-index: 2;
+    position: relative;
+  }
+
+  /* XL char: much bigger for full page */
+  .p-char-xl {
+    font-size: 320pt;
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+    text-shadow:
+      8px 8px 0 rgba(255,255,255,0.5),
+      -2px -2px 0 rgba(0,0,0,0.08),
+      10px 20px 0 rgba(0,0,0,0.3),
+      16px 36px 40px rgba(0,0,0,0.22);
+    z-index: 2;
+    position: relative;
+  }
+
+  .p-sparkle {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  /* ===== PRINT MODE ===== */
+  @media print {
+    body { background: white; }
+    header, .editor, .preview-label, .preview-sep { display: none !important; }
+
+    /* Default: show multi, hide full */
+    #printPageMulti { box-shadow: none; margin: 0; }
+    #printPageFull  { display: none; }
+
+    /* When printing full mode */
+    body.print-full #printPageMulti { display: none !important; }
+    body.print-full #printPageFull  {
+      display: flex !important;
+      box-shadow: none;
+      margin: 0;
+      page-break-inside: avoid;
+    }
+  }
+  @page { size: A4; margin: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎉 壁面飾りメーカー 🎉</h1>
+  <p>文字とカラーを自由にカスタマイズ → A4印刷して切り抜いて使えます</p>
+</header>
+
+<div class="editor">
+
+  <div class="section-title">STEP 1　テキストを入力</div>
+  <div class="input-row">
+    <div class="text-input-wrap">
+      <input type="text" id="textInput" value="おめでとう" maxlength="9" placeholder="例：おめでとう">
+      <button class="btn-apply" onclick="applyText()">文字を反映する</button>
+    </div>
+  </div>
+
+  <div class="section-title">STEP 2　1文字ずつカラーを選ぶ</div>
+  <div class="cards-editor" id="cardEditor"></div>
+
+  <div class="print-btns">
+    <button class="btn-print" onclick="printMulti()">🖨️ まとめて印刷（A4・1枚）</button>
+  </div>
+
+</div>
+
+<div class="preview-label">↓ まとめて印刷プレビュー</div>
+<div id="printPageMulti"></div>
+
+<div class="preview-sep">↓ A4フルサイズ印刷プレビュー（各ボタンで選択）</div>
+<div id="printPageFull"></div>
+
+<script>
+  const COLORS = [
+    { id:'pink',   label:'ピンク',  g:['#ff8ecb','#ff1a75'], sh:'#b5004e' },
+    { id:'orange', label:'オレンジ',g:['#ffd06b','#ff8800'], sh:'#b55e00' },
+    { id:'green',  label:'グリーン',g:['#8fef5a','#2db81b'], sh:'#198a10' },
+    { id:'blue',   label:'ブルー',  g:['#60dbff','#0099d8'], sh:'#006fa0' },
+    { id:'purple', label:'パープル',g:['#d98fff','#9b20e8'], sh:'#6910b0' },
+    { id:'yellow', label:'イエロー',g:['#fff176','#ffc200'], sh:'#c08800' },
+    { id:'red',    label:'レッド',  g:['#ff7a7a','#e81010'], sh:'#a00000' },
+    { id:'teal',   label:'ティール',g:['#5dffe0','#00b894'], sh:'#007a63' },
+  ];
+
+  // Shape SVG generators — all centered at 0,0 in a size×size viewBox
+  function svgWrap(size, opacity, rotation, id, pathEl) {
+    const glow = Math.round(size * 0.28);
+    const sh   = Math.round(size * 0.10);
+    const bl   = Math.round(size * 0.18);
+    return `<svg class="p-sparkle" width="${size}" height="${size}" viewBox="-${size/2} -${size/2} ${size} ${size}"
+      style="transform:rotate(${rotation}deg);filter:drop-shadow(0 0 ${glow}px rgba(255,255,255,0.75)) drop-shadow(0 ${sh}px ${bl}px rgba(0,0,0,0.25))">
+      <defs>
+        <radialGradient id="${id}" cx="35%" cy="28%" r="68%">
+          <stop offset="0%" stop-color="white" stop-opacity="${opacity}"/>
+          <stop offset="100%" stop-color="white" stop-opacity="${(opacity*0.30).toFixed(2)}"/>
+        </radialGradient>
+      </defs>
+      ${pathEl}
+    </svg>`;
+  }
+
+  // 4-point sparkle
+  function shape4Sparkle(size, op, rot, id) {
+    const h=size/2, s=size*0.22, l=size*0.06;
+    const p = `<path d="M0,-${h} C${l},-${s} ${s},-${l} ${h},0 C${s},${l} ${l},${s} 0,${h} C-${l},${s} -${s},${l} -${h},0 C-${s},-${l} -${l},-${s} 0,-${h}Z" fill="url(#${id})"/>`;
+    return svgWrap(size, op, rot, id, p);
+  }
+
+  // 5-pointed star
+  function shape5Star(size, op, rot, id) {
+    const R=size*0.48, r=size*0.20;
+    let pts='';
+    for(let i=0;i<10;i++){
+      const a=(i*36-90)*Math.PI/180;
+      const rad=i%2===0?R:r;
+      pts+=`${(Math.cos(a)*rad).toFixed(2)},${(Math.sin(a)*rad).toFixed(2)} `;
+    }
+    const p = `<polygon points="${pts.trim()}" fill="url(#${id})"/>`;
+    return svgWrap(size, op, rot, id, p);
+  }
+
+  // Heart
+  function shapeHeart(size, op, rot, id) {
+    const s=size*0.46;
+    // heart: two bezier arcs
+    const p = `<path d="M0,${s*0.3}
+      C${s*0.1},${s*0.7} ${s},${s*0.7} ${s},${s*0.15}
+      C${s},${-s*0.35} ${s*0.45},${-s*0.55} 0,${-s*0.1}
+      C${-s*0.45},${-s*0.55} ${-s},${-s*0.35} ${-s},${s*0.15}
+      C${-s},${s*0.7} ${-s*0.1},${s*0.7} 0,${s*0.3}Z"
+      fill="url(#${id})"/>`;
+    return svgWrap(size, op, rot, id, p);
+  }
+
+  // 6-point snowflake / asterisk
+  function shapeSnowflake(size, op, rot, id) {
+    const h=size*0.46, w=size*0.06, d=size*0.14;
+    let paths='';
+    for(let i=0;i<3;i++){
+      const a=i*60*Math.PI/180;
+      const cos=Math.cos(a), sin=Math.sin(a);
+      // bar
+      paths+=`<rect x="${-w/2}" y="${-h}" width="${w}" height="${h*2}" rx="${w/2}"
+        fill="url(#${id})" transform="rotate(${i*60})"/>`;
+      // small diagonal ticks
+      [-0.5,0.5].forEach(side=>{
+        const tx=side*d, ty=-h*0.52;
+        paths+=`<rect x="${-w*0.4}" y="${-d*0.9}" width="${w*0.8}" height="${d*1.8}" rx="${w*0.4}"
+          fill="url(#${id})" transform="rotate(${i*60}) translate(${tx},${ty}) rotate(${side*50})"/>`;
+      });
+    }
+    return svgWrap(size, op, rot, id, paths);
+  }
+
+  // Diamond (rhombus)
+  function shapeDiamond(size, op, rot, id) {
+    const h=size*0.50, w=size*0.32;
+    const p = `<polygon points="0,${-h} ${w},0 0,${h} ${-w},0" fill="url(#${id})"/>`;
+    return svgWrap(size, op, rot, id, p);
+  }
+
+  // Moon crescent
+  function shapeMoon(size, op, rot, id) {
+    const r=size*0.44;
+    const p = `<path d="M${r*0.15},${-r}
+      A${r},${r} 0 1,1 ${r*0.15},${r}
+      A${r*0.7},${r*0.7} 0 1,0 ${r*0.15},${-r}Z"
+      fill="url(#${id})"/>`;
+    return svgWrap(size, op, rot, id, p);
+  }
+
+  // All shapes array
+  const SHAPES = [shape4Sparkle, shape5Star, shapeHeart, shapeSnowflake, shapeDiamond, shapeMoon];
+
+  function sparkle(size, opacity, rotation, shapeIdx, uid) {
+    const fn = SHAPES[shapeIdx % SHAPES.length];
+    const id = `sg${uid}`;
+    return fn(size, opacity, rotation, id);
+  }
+
+  // Generate N random star positions along the circle edge
+  // r: radius ratio (0-1), spread: how much to vary radius
+  function randomStars(n, minSz, maxSz, seed) {
+    // Simple seeded random so layout stays stable per card (doesn't re-randomize on color change)
+    let s = seed || 42;
+    function rnd() { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; }
+
+    const stars = [];
+    for (let i = 0; i < n; i++) {
+      const baseAngle = (i / n) * 360;
+      const jitter = (rnd() - 0.5) * (360 / n * 0.7);
+      const angle = (baseAngle + jitter + 360) % 360;
+      const rad = angle * Math.PI / 180;
+      const r = 0.68 + rnd() * 0.20;
+      const cx = +(50 + r * 50 * Math.cos(rad)).toFixed(1);
+      const cy = +(50 + r * 50 * Math.sin(rad)).toFixed(1);
+      const sz = Math.round(minSz + rnd() * (maxSz - minSz));
+      const op = +(0.75 + rnd() * 0.22).toFixed(2);
+      const rot = Math.round((rnd() - 0.5) * 70);
+      const shapeIdx = Math.floor(rnd() * SHAPES.length);
+      stars.push({cx, cy, sz, op, rot, shapeIdx});
+    }
+    return stars;
+  }
+
+  let cards = [];
+  let printMode = 'multi'; // 'multi' | 'full'
+
+  function colorById(id){ return COLORS.find(c=>c.id===id) || COLORS[0]; }
+  function grad(col){ return `radial-gradient(circle at 38% 35%, ${col.g[0]}, ${col.g[1]})`; }
+
+  function applyText(){
+    const txt = document.getElementById('textInput').value.trim();
+    if(!txt) return;
+    const old = [...cards];
+    cards = Array.from(txt).map((ch, i) => ({
+      char: ch,
+      colorId: old[i] ? old[i].colorId : COLORS[i % COLORS.length].id
+    }));
+    render();
+  }
+
+  function setColor(index, colorId){
+    cards[index].colorId = colorId;
+    render();
+  }
+
+  function render(){
+    renderEditor();
+    renderMulti();
+  }
+
+  function renderEditor(){
+    const el = document.getElementById('cardEditor');
+    if(!cards.length){
+      el.innerHTML = '<p style="color:#aaa;font-size:13px;text-align:center;padding:16px">テキストを入力してください</p>';
+      return;
+    }
+    el.innerHTML = cards.map((card, i) => {
+      const col = colorById(card.colorId);
+      const swatches = COLORS.map(c => `
+        <div class="swatch ${c.id === card.colorId ? 'active' : ''}"
+          style="background:radial-gradient(circle at 38% 35%, ${c.g[0]}, ${c.g[1]})"
+          title="${c.label}"
+          onclick="setColor(${i},'${c.id}')"></div>
+      `).join('');
+      return `
+        <div class="card-row">
+          <div class="card-num">${i+1}</div>
+          <div class="char-display"
+            style="background:${grad(col)};box-shadow:0 4px 0 ${col.sh},0 6px 14px rgba(0,0,0,0.15)">
+            ${card.char}
+          </div>
+          <div class="color-swatches">${swatches}</div>
+          <button class="btn-full" onclick="printFull(${i})">
+            🔍 A4フルで<br>印刷
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function starsHtml(n, minSz, maxSz, seed) {
+    return randomStars(n, minSz, maxSz, seed).map(({cx, cy, sz, op, rot, shapeIdx}, i) => {
+      const uid = `${seed}_${i}`;
+      return `<div style="position:absolute;left:${cx}%;top:${cy}%;transform:translate(-50%,-50%);z-index:4;pointer-events:none">${sparkle(sz, op, rot, shapeIdx, uid)}</div>`;
+    }).join('');
+  }
+
+  function renderMulti(){
+    const el = document.getElementById('printPageMulti');
+    if(!cards.length){ el.innerHTML = ''; return; }
+    el.innerHTML = cards.map(card => {
+      const col = colorById(card.colorId);
+      return `
+        <div class="p-card">
+          <div class="p-card-inner"
+            style="box-shadow:0 10px 0 ${col.sh},0 16px 28px rgba(0,0,0,0.2)">
+            <div class="p-card-bg" style="background:${grad(col)}"></div>
+            ${starsHtml(8, 12, 22, card.char.codePointAt(0))}
+            <div class="p-char">${card.char}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderFull(index){
+    const card = cards[index];
+    if(!card) return;
+    const col = colorById(card.colorId);
+    const el = document.getElementById('printPageFull');
+    el.style.display = 'flex';
+    el.innerHTML = `
+      <div class="p-card-xl-wrap">
+        <div class="p-card-xl">
+          <div class="p-card-inner"
+            style="box-shadow:0 28px 0 ${col.sh},0 40px 80px rgba(0,0,0,0.25)">
+            <div class="p-card-bg" style="background:${grad(col)}"></div>
+            ${starsHtml(8, 48, 88, card.char.codePointAt(0))}
+            <div class="p-char-xl">${card.char}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function printMulti(){
+    document.body.classList.remove('print-full');
+    window.print();
+  }
+
+  function printFull(index){
+    renderFull(index);
+    document.body.classList.add('print-full');
+    window.print();
+    document.body.classList.remove('print-full');
+  }
+
+  applyText();
+</script>
+</body>
+</html>
