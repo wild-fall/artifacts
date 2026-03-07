@@ -449,21 +449,20 @@
     body { background: white; }
     header, .editor, .preview-label, .preview-sep { display: none !important; }
 
-    /* Default: show multi, hide full */
-    #printPageMulti { box-shadow: none; margin: 0; }
-    #printPageFull  { display: none !important; }
-
-    /* When printing full mode */
-    body.print-full #printPageMulti { display: none !important; }
-    body.print-full #printPageFull  {
-      display: block !important;
-    }
-    body.print-full .full-page {
+    #printPageMulti {
       box-shadow: none;
       margin: 0;
       page-break-after: always;
     }
-    body.print-full .full-page:last-child {
+    #printPageFull {
+      display: block !important;
+    }
+    .full-page {
+      box-shadow: none;
+      margin: 0;
+      page-break-after: always;
+    }
+    .full-page:last-child {
       page-break-after: avoid;
     }
   }
@@ -527,16 +526,13 @@
   </div>
 
   <div class="print-btns">
-    <button class="btn-print" onclick="printMulti()">🖨️ まとめて印刷（A4・1枚）</button>
-    <button class="btn-print" style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 6px 0 #b45309,0 10px 20px rgba(245,158,11,0.3)" onclick="printAllFull()">🖨️ A4フルサイズで全文字印刷</button>
+    <button class="btn-print" onclick="printAll()">🖨️ 印刷する</button>
   </div>
 
 </div>
 
-<div class="preview-label">↓ まとめて印刷プレビュー</div>
+<div class="preview-label">↓ 印刷プレビュー（1ページ目：まとめ / 2ページ目以降：1文字ずつA4）</div>
 <div id="printPageMulti"></div>
-
-<div class="preview-sep">↓ A4フルサイズ印刷プレビュー</div>
 <div id="printPageFull"></div>
 
 <script>
@@ -706,8 +702,7 @@
   function render(){
     renderEditor();
     renderMulti();
-    const fullEl = document.getElementById('printPageFull');
-    if(fullEl && fullEl.style.display !== 'none' && fullEl.innerHTML.trim()) renderAllFull();
+    renderAllFull();
   }
 
   function renderEditor(){
@@ -790,16 +785,9 @@
     }).join('');
   }
 
-  function printMulti(){
-    document.body.classList.remove('print-full');
-    window.print();
-  }
-
-  function printAllFull(){
+  function printAll(){
     renderAllFull();
-    document.body.classList.add('print-full');
     window.print();
-    document.body.classList.remove('print-full');
   }
 
   applyText();
