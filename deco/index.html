@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>入学おめでとう！壁面飾りメーカー</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --bg: #f3f0ff;
@@ -198,6 +199,26 @@
     text-align: center;
   }
   .btn-full:active { transform: translateY(2px); box-shadow: 0 1px 0 #b91c1c; }
+
+  .btn-img {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #4338ca, 0 5px 12px rgba(99,102,241,0.3);
+    transition: transform .1s, box-shadow .1s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .btn-img:active { transform: translateY(2px); box-shadow: 0 1px 0 #4338ca; }
+  .btn-img:disabled { opacity: 0.6; cursor: wait; }
 
   /* Print buttons row */
   .print-btns {
@@ -428,6 +449,10 @@
 <div id="printPageMulti"></div>
 
 <div class="preview-sep">↓ A4フルサイズ印刷プレビュー（各ボタンで選択）</div>
+<!-- Hidden single card for image export -->
+<div id="imgExportWrap" style="position:fixed;left:-9999px;top:0;pointer-events:none">
+  <div id="imgExportCard"></div>
+</div>
 <div id="printPageFull"></div>
 
 <script>
@@ -615,6 +640,9 @@
           <button class="btn-full" onclick="printFull(${i})">
             🔍 A4フルで<br>印刷
           </button>
+          <button class="btn-img" id="imgBtn${i}" onclick="saveImage(${i})">
+            🖼️ 画像で<br>保存
+          </button>
         </div>
       `;
     }).join('');
@@ -676,6 +704,77 @@
   }
 
   applyText();
+
+  async function saveImage(index) {
+    const card = cards[index];
+    if (!card) return;
+    const btn = document.getElementById('imgBtn' + index);
+    btn.disabled = true;
+    btn.textContent = '生成中…';
+
+    const col = colorById(card.colorId);
+    const SIZE = 800; // px
+
+    // Build standalone circle card HTML in the hidden div
+    const wrap = document.getElementById('imgExportCard');
+    wrap.style.width  = SIZE + 'px';
+    wrap.style.height = SIZE + 'px';
+    wrap.style.position = 'relative';
+    wrap.style.borderRadius = '50%';
+    wrap.style.overflow = 'hidden';
+    wrap.style.border = '8px solid rgba(255,255,255,0.65)';
+    wrap.style.background = grad(col);
+    wrap.style.boxShadow = 'none';
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    wrap.style.justifyContent = 'center';
+    wrap.style.fontFamily = "'Zen Maru Gothic', sans-serif";
+
+    // Shine
+    const shine = document.createElement('div');
+    shine.style.cssText = `position:absolute;width:55%;height:40%;border-radius:50%;
+      background:radial-gradient(ellipse,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0) 80%);
+      top:8%;left:14%;z-index:3;pointer-events:none`;
+    wrap.innerHTML = '';
+    wrap.appendChild(shine);
+
+    // Stars
+    const starsDiv = document.createElement('div');
+    starsDiv.style.cssText = 'position:absolute;inset:0;z-index:4;pointer-events:none';
+    starsDiv.innerHTML = starsHtml(6, 96, 176, card.char.codePointAt(0));
+    wrap.appendChild(starsDiv);
+
+    // Character
+    const charEl = document.createElement('div');
+    charEl.textContent = card.char;
+    charEl.style.cssText = `font-family:'Zen Maru Gothic',sans-serif;font-size:${SIZE*0.60}px;
+      font-weight:900;line-height:1;color:white;position:relative;z-index:2;
+      text-shadow:2px 2px 0 rgba(255,255,255,0.4),3px 6px 10px rgba(0,0,0,0.25)`;
+    wrap.appendChild(charEl);
+
+    // Wait for fonts
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 120));
+
+    try {
+      const canvas = await html2canvas(wrap, {
+        width: SIZE, height: SIZE,
+        scale: 2,
+        backgroundColor: null,
+        useCORS: true,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `card_${card.char}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) {
+      alert('画像の生成に失敗しました: ' + e.message);
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '🖼️ 画像で<br>保存';
+  }
 </script>
 </body>
 </html>
