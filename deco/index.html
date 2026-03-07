@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>入学おめでとう！壁面飾りメーカー</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --bg: #f3f0ff;
@@ -200,25 +199,6 @@
   }
   .btn-full:active { transform: translateY(2px); box-shadow: 0 1px 0 #b91c1c; }
 
-  .btn-img {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
-    font-family: 'Zen Maru Gothic', sans-serif;
-    font-weight: 900;
-    font-size: 11px;
-    border: none;
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #4338ca, 0 5px 12px rgba(99,102,241,0.3);
-    transition: transform .1s, box-shadow .1s;
-    white-space: nowrap;
-    flex-shrink: 0;
-    line-height: 1.3;
-    text-align: center;
-  }
-  .btn-img:active { transform: translateY(2px); box-shadow: 0 1px 0 #4338ca; }
-  .btn-img:disabled { opacity: 0.6; cursor: wait; }
 
   /* Print buttons row */
   .print-btns {
@@ -322,22 +302,13 @@
   }
 
   /* ===== FULL A4 PRINT PAGE ===== */
-  #printPageFull {
-    width: 210mm;
-    height: 297mm;
-    background: white;
-    margin: 0 auto 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  /* printPageFull: shown as preview on screen when populated */
+  #printPageFull > .full-page:first-child {
+    margin-top: 0;
   }
 
-  /* Hide full page in screen by default */
-  #printPageFull { display: none; }
-
   /* Force square aspect on the full card wrapper */
-  #printPageFull > .p-card-xl-wrap {
+  .p-card-xl-wrap {
     width: 192mm;
     height: 192mm;
     flex-shrink: 0;
@@ -458,6 +429,21 @@
     overflow: visible;
   }
 
+  /* ===== FULL PAGE: each card on its own A4 ===== */
+  #printPageFull {
+    display: none;
+  }
+  .full-page {
+    width: 210mm;
+    height: 297mm;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  }
+
   /* ===== PRINT MODE ===== */
   @media print {
     body { background: white; }
@@ -465,15 +451,20 @@
 
     /* Default: show multi, hide full */
     #printPageMulti { box-shadow: none; margin: 0; }
-    #printPageFull  { display: none; }
+    #printPageFull  { display: none !important; }
 
     /* When printing full mode */
     body.print-full #printPageMulti { display: none !important; }
     body.print-full #printPageFull  {
-      display: flex !important;
+      display: block !important;
+    }
+    body.print-full .full-page {
       box-shadow: none;
       margin: 0;
-      page-break-inside: avoid;
+      page-break-after: always;
+    }
+    body.print-full .full-page:last-child {
+      page-break-after: avoid;
     }
   }
   @page { size: A4; margin: 0; }
@@ -537,6 +528,7 @@
 
   <div class="print-btns">
     <button class="btn-print" onclick="printMulti()">🖨️ まとめて印刷（A4・1枚）</button>
+    <button class="btn-print" style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 6px 0 #b45309,0 10px 20px rgba(245,158,11,0.3)" onclick="printAllFull()">🖨️ A4フルサイズで全文字印刷</button>
   </div>
 
 </div>
@@ -544,11 +536,7 @@
 <div class="preview-label">↓ まとめて印刷プレビュー</div>
 <div id="printPageMulti"></div>
 
-<div class="preview-sep">↓ A4フルサイズ印刷プレビュー（各ボタンで選択）</div>
-<!-- Hidden single card for image export -->
-<div id="imgExportWrap" style="position:fixed;left:-9999px;top:0;pointer-events:none">
-  <div id="imgExportCard"></div>
-</div>
+<div class="preview-sep">↓ A4フルサイズ印刷プレビュー</div>
 <div id="printPageFull"></div>
 
 <script>
@@ -718,6 +706,8 @@
   function render(){
     renderEditor();
     renderMulti();
+    const fullEl = document.getElementById('printPageFull');
+    if(fullEl && fullEl.style.display !== 'none' && fullEl.innerHTML.trim()) renderAllFull();
   }
 
   function renderEditor(){
@@ -742,12 +732,7 @@
             ${card.char}
           </div>
           <div class="color-swatches">${swatches}</div>
-          <button class="btn-full" onclick="printFull(${i})">
-            🔍 A4フルで<br>印刷
-          </button>
-          <button class="btn-img" id="imgBtn${i}" onclick="saveImage(${i})">
-            🖼️ 画像で<br>保存
-          </button>
+
         </div>
       `;
     }).join('');
@@ -780,26 +765,29 @@
     }).join('');
   }
 
-  function renderFull(index){
-    const card = cards[index];
-    if(!card) return;
-    const col = colorById(card.colorId);
+  function renderAllFull(){
+    if(!cards.length) return;
     const o = getOpts();
-    const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
-    const charCls = ['p-char-xl', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
-    const stars = o.stars ? starsHtml(6, 48, 88, card.char.codePointAt(0)) : '';
     const el = document.getElementById('printPageFull');
-    el.style.display = 'flex';
-    el.innerHTML = `
-      <div class="p-card-xl-wrap">
-        <div class="p-card-xl">
-          <div class="p-card-inner">
-            <div class="${bgCls}" style="background:${grad(col)}"></div>
-            ${stars}
-            <div class="${charCls}">${card.char}</div>
+    el.style.display = 'block';
+    el.innerHTML = cards.map(card => {
+      const col = colorById(card.colorId);
+      const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
+      const charCls = ['p-char-xl', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
+      const stars = o.stars ? starsHtml(6, 48, 88, card.char.codePointAt(0)) : '';
+      return `
+        <div class="full-page">
+          <div class="p-card-xl-wrap">
+            <div class="p-card-xl">
+              <div class="p-card-inner">
+                <div class="${bgCls}" style="background:${grad(col)}"></div>
+                ${stars}
+                <div class="${charCls}">${card.char}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>`;
+        </div>`;
+    }).join('');
   }
 
   function printMulti(){
@@ -807,8 +795,8 @@
     window.print();
   }
 
-  function printFull(index){
-    renderFull(index);
+  function printAllFull(){
+    renderAllFull();
     document.body.classList.add('print-full');
     window.print();
     document.body.classList.remove('print-full');
@@ -816,76 +804,6 @@
 
   applyText();
 
-  async function saveImage(index) {
-    const card = cards[index];
-    if (!card) return;
-    const btn = document.getElementById('imgBtn' + index);
-    btn.disabled = true;
-    btn.textContent = '生成中…';
-
-    const col = colorById(card.colorId);
-    const SIZE = 800; // px
-
-    // Build standalone circle card HTML in the hidden div
-    const wrap = document.getElementById('imgExportCard');
-    wrap.style.width  = SIZE + 'px';
-    wrap.style.height = SIZE + 'px';
-    wrap.style.position = 'relative';
-    wrap.style.borderRadius = '50%';
-    wrap.style.overflow = 'hidden';
-    wrap.style.border = '8px solid rgba(255,255,255,0.65)';
-    wrap.style.background = grad(col);
-    wrap.style.boxShadow = 'none';
-    wrap.style.display = 'flex';
-    wrap.style.alignItems = 'center';
-    wrap.style.justifyContent = 'center';
-    wrap.style.fontFamily = "'Zen Maru Gothic', sans-serif";
-
-    // Shine
-    const shine = document.createElement('div');
-    shine.style.cssText = `position:absolute;width:55%;height:40%;border-radius:50%;
-      background:radial-gradient(ellipse,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0) 80%);
-      top:8%;left:14%;z-index:3;pointer-events:none`;
-    wrap.innerHTML = '';
-    wrap.appendChild(shine);
-
-    // Stars
-    const starsDiv = document.createElement('div');
-    starsDiv.style.cssText = 'position:absolute;inset:0;z-index:4;pointer-events:none';
-    starsDiv.innerHTML = starsHtml(6, 96, 176, card.char.codePointAt(0));
-    wrap.appendChild(starsDiv);
-
-    // Character
-    const charEl = document.createElement('div');
-    charEl.textContent = card.char;
-    charEl.style.cssText = `font-family:'Zen Maru Gothic',sans-serif;font-size:${SIZE*0.60}px;
-      font-weight:900;line-height:1;color:white;position:relative;z-index:2;
-      text-shadow:2px 2px 0 rgba(255,255,255,0.4),3px 6px 10px rgba(0,0,0,0.25)`;
-    wrap.appendChild(charEl);
-
-    // Wait for fonts
-    await document.fonts.ready;
-    await new Promise(r => setTimeout(r, 120));
-
-    try {
-      const canvas = await html2canvas(wrap, {
-        width: SIZE, height: SIZE,
-        scale: 2,
-        backgroundColor: null,
-        useCORS: true,
-        logging: false,
-      });
-      const link = document.createElement('a');
-      link.download = `card_${card.char}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch(e) {
-      alert('画像の生成に失敗しました: ' + e.message);
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = '🖼️ 画像で<br>保存';
-  }
 </script>
 </body>
 </html>
