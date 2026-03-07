@@ -246,6 +246,58 @@
   }
   .btn-print:active { transform: translateY(4px); box-shadow: 0 2px 0 #047857; }
 
+  /* ===== TOGGLE PANEL ===== */
+  .toggle-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 16px rgba(124,58,237,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+    align-items: center;
+  }
+  .toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: #d1d5db;
+    transition: background .2s;
+  }
+  .toggle-switch input:checked + .toggle-track { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+  .toggle-knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform .2s;
+    pointer-events: none;
+  }
+  .toggle-switch input:checked ~ .toggle-knob { transform: translateX(20px); }
+  .toggle-label { font-size: 13px; font-weight: 900; color: var(--text); }
+
+  /* toggle-off helpers */
+  .bg-no-dots::after   { display: none !important; }
+  .bg-no-shine::before { display: none !important; }
+  .char-no-stroke { -webkit-text-stroke: 0 !important; }
+
   /* ===== PREVIEW LABEL ===== */
   .preview-label {
     text-align: center;
@@ -353,7 +405,7 @@
     width: 55%; height: 40%;
     border-radius: 50%;
     background: radial-gradient(ellipse, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 80%);
-    top: 8%; left: 14%;
+    top: 10%; left: 12%;
     z-index: 1;
     pointer-events: none;
   }
@@ -446,6 +498,42 @@
 
   <div class="section-title">STEP 2　1文字ずつカラーを選ぶ</div>
   <div class="cards-editor" id="cardEditor"></div>
+
+  <div class="section-title">STEP 3　デザインをカスタマイズ</div>
+  <div class="toggle-panel">
+    <label class="toggle-item">
+      <div class="toggle-switch">
+        <input type="checkbox" id="togStars" checked onchange="render()">
+        <div class="toggle-track"></div>
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label">✦ 星・飾り</span>
+    </label>
+    <label class="toggle-item">
+      <div class="toggle-switch">
+        <input type="checkbox" id="togDots" checked onchange="render()">
+        <div class="toggle-track"></div>
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label">・・ ドットパターン</span>
+    </label>
+    <label class="toggle-item">
+      <div class="toggle-switch">
+        <input type="checkbox" id="togShine" checked onchange="render()">
+        <div class="toggle-track"></div>
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label">✨ 光沢</span>
+    </label>
+    <label class="toggle-item">
+      <div class="toggle-switch">
+        <input type="checkbox" id="togStroke" checked onchange="render()">
+        <div class="toggle-track"></div>
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label">Ａ 文字の縁取り</span>
+    </label>
+  </div>
 
   <div class="print-btns">
     <button class="btn-print" onclick="printMulti()">🖨️ まとめて印刷（A4・1枚）</button>
@@ -618,6 +706,15 @@
     render();
   }
 
+  function getOpts(){
+    return {
+      stars:  document.getElementById('togStars')?.checked  ?? true,
+      dots:   document.getElementById('togDots')?.checked   ?? true,
+      shine:  document.getElementById('togShine')?.checked  ?? true,
+      stroke: document.getElementById('togStroke')?.checked ?? true,
+    };
+  }
+
   function render(){
     renderEditor();
     renderMulti();
@@ -666,15 +763,18 @@
   function renderMulti(){
     const el = document.getElementById('printPageMulti');
     if(!cards.length){ el.innerHTML = ''; return; }
+    const o = getOpts();
     el.innerHTML = cards.map(card => {
       const col = colorById(card.colorId);
+      const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
+      const charCls = ['p-char', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
+      const stars = o.stars ? starsHtml(6, 12, 22, card.char.codePointAt(0)) : '';
       return `
         <div class="p-card">
-          <div class="p-card-inner"
-            style="">
-            <div class="p-card-bg" style="background:${grad(col)}"></div>
-            ${starsHtml(6, 12, 22, card.char.codePointAt(0))}
-            <div class="p-char">${card.char}</div>
+          <div class="p-card-inner">
+            <div class="${bgCls}" style="background:${grad(col)}"></div>
+            ${stars}
+            <div class="${charCls}">${card.char}</div>
           </div>
         </div>`;
     }).join('');
@@ -684,16 +784,19 @@
     const card = cards[index];
     if(!card) return;
     const col = colorById(card.colorId);
+    const o = getOpts();
+    const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
+    const charCls = ['p-char-xl', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
+    const stars = o.stars ? starsHtml(6, 48, 88, card.char.codePointAt(0)) : '';
     const el = document.getElementById('printPageFull');
     el.style.display = 'flex';
     el.innerHTML = `
       <div class="p-card-xl-wrap">
         <div class="p-card-xl">
-          <div class="p-card-inner"
-            style="">
-            <div class="p-card-bg" style="background:${grad(col)}"></div>
-            ${starsHtml(6, 48, 88, card.char.codePointAt(0))}
-            <div class="p-char-xl">${card.char}</div>
+          <div class="p-card-inner">
+            <div class="${bgCls}" style="background:${grad(col)}"></div>
+            ${stars}
+            <div class="${charCls}">${card.char}</div>
           </div>
         </div>
       </div>`;
