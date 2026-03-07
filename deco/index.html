@@ -532,7 +532,7 @@
   }
 
   // All shapes array
-  const SHAPES = [shape4Sparkle, shape5Star, shapeHeart, shapeSnowflake, shapeDiamond, shapeMoon];
+  const SHAPES = [shape4Sparkle, shape5Star, shapeMoon];
 
   function sparkle(size, opacity, rotation, shapeIdx, uid) {
     const fn = SHAPES[shapeIdx % SHAPES.length];
@@ -639,7 +639,7 @@
           <div class="p-card-inner"
             style="box-shadow:0 10px 0 ${col.sh},0 16px 28px rgba(0,0,0,0.2)">
             <div class="p-card-bg" style="background:${grad(col)}"></div>
-            ${starsHtml(8, 12, 22, card.char.codePointAt(0))}
+            ${starsHtml(6, 12, 22, card.char.codePointAt(0))}
             <div class="p-char">${card.char}</div>
           </div>
         </div>`;
@@ -658,7 +658,7 @@
           <div class="p-card-inner"
             style="box-shadow:0 28px 0 ${col.sh},0 40px 80px rgba(0,0,0,0.25)">
             <div class="p-card-bg" style="background:${grad(col)}"></div>
-            ${starsHtml(8, 48, 88, card.char.codePointAt(0))}
+            ${starsHtml(6, 48, 88, card.char.codePointAt(0))}
             <div class="p-char-xl">${card.char}</div>
           </div>
         </div>
