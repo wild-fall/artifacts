@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>入学おめでとう！壁面飾りメーカー</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
   :root {
     --bg: #f3f0ff;
@@ -467,6 +468,101 @@
     }
   }
   @page { size: A4; margin: 0; }
+
+  /* ===== ICON PICKER ===== */
+  .icon-picker-btn {
+    background: linear-gradient(135deg, #f472b6, #a855f7);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #7e22ce, 0 5px 12px rgba(168,85,247,0.3);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .icon-picker-btn:active { transform: translateY(2px); }
+
+  .icon-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-modal-overlay.open { display: flex; }
+  .icon-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    width: min(540px, 92vw);
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .icon-modal h2 {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .icon-category {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin: 12px 0 6px;
+    text-transform: uppercase;
+  }
+  .icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .icon-btn {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    border: 2px solid #e9d5ff;
+    background: #faf5ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--accent);
+    transition: background .15s, border-color .15s, transform .1s;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { background: #ede9fe; border-color: var(--accent); transform: scale(1.12); }
+  .icon-btn i { pointer-events: none; }
+  .icon-modal-close {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #f3f4f6;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #6b7280;
+    cursor: pointer;
+  }
+  .icon-modal-close:hover { background: #e5e7eb; }
+
+  /* FA icon rendering in card */
+  .p-char i, .p-char-xl i {
+    display: block;
+    line-height: 1;
+  }
+  .p-char-xl i { font-size: 0.9em; }
 </style>
 </head>
 <body>
@@ -478,11 +574,26 @@
 
 <div class="editor">
 
-  <div class="section-title">STEP 1　テキストを入力</div>
+  <div class="section-title">STEP 1　テキストを入力 / アイコンを追加</div>
   <div class="input-row">
     <div class="text-input-wrap">
       <input type="text" id="textInput" value="おめでとう" maxlength="9" placeholder="例：おめでとう">
       <button class="btn-apply" onclick="applyText()">文字を反映する</button>
+      <button class="icon-picker-btn" onclick="openIconPicker()">🎨 アイコンを追加</button>
+    </div>
+  </div>
+
+  <!-- Icon picker modal -->
+  <div class="icon-modal-overlay" id="iconModal">
+    <div class="icon-modal">
+      <h2>🎨 アイコンを選ぶ（クリックでカードに追加）</h2>
+      <div class="icon-category">お祝い・パーティー</div>
+      <div class="icon-grid" id="iconGrid"></div>
+      <div class="icon-category">動物・自然</div>
+      <div class="icon-grid" id="iconGrid2"></div>
+      <div class="icon-category">食べ物・もの</div>
+      <div class="icon-grid" id="iconGrid3"></div>
+      <button class="icon-modal-close" onclick="closeIconPicker()">閉じる</button>
     </div>
   </div>
 
@@ -674,6 +785,58 @@
   function colorById(id){ return COLORS.find(c=>c.id===id) || COLORS[0]; }
   function grad(col){ return `radial-gradient(circle at 38% 35%, ${col.g[0]}, ${col.g[1]})`; }
 
+  // card: { char, colorId, icon? }  icon = FA class string e.g. "fa-solid fa-star"
+  const ICON_CATEGORIES = [
+    { gridId: 'iconGrid', icons: [
+      'fa-solid fa-star','fa-solid fa-heart','fa-solid fa-gift','fa-solid fa-crown',
+      'fa-solid fa-cake-candles','fa-solid fa-champagne-glasses','fa-solid fa-music',
+      'fa-solid fa-bell','fa-solid fa-bolt','fa-solid fa-fire','fa-solid fa-sun',
+      'fa-solid fa-rainbow','fa-solid fa-wand-magic-sparkles','fa-solid fa-medal',
+      'fa-solid fa-trophy','fa-solid fa-graduation-cap','fa-solid fa-school',
+      'fa-solid fa-pencil','fa-solid fa-book','fa-solid fa-backpack',
+    ]},
+    { gridId: 'iconGrid2', icons: [
+      'fa-solid fa-dove','fa-solid fa-paw','fa-solid fa-fish','fa-solid fa-frog',
+      'fa-solid fa-cat','fa-solid fa-dog','fa-solid fa-horse','fa-solid fa-feather',
+      'fa-solid fa-leaf','fa-solid fa-seedling','fa-solid fa-tree','fa-solid fa-flower',
+      'fa-solid fa-clover','fa-solid fa-snowflake','fa-solid fa-cloud','fa-solid fa-moon',
+    ]},
+    { gridId: 'iconGrid3', icons: [
+      'fa-solid fa-ice-cream','fa-solid fa-cupcake','fa-solid fa-apple-whole',
+      'fa-solid fa-lemon','fa-solid fa-carrot','fa-solid fa-pizza-slice',
+      'fa-solid fa-burger','fa-solid fa-mug-hot','fa-solid fa-gamepad',
+      'fa-solid fa-bicycle','fa-solid fa-car','fa-solid fa-bus-school',
+      'fa-solid fa-rocket','fa-solid fa-robot','fa-solid fa-alien','fa-solid fa-face-laugh-beam',
+    ]},
+  ];
+
+  function openIconPicker(){
+    ICON_CATEGORIES.forEach(cat => {
+      const grid = document.getElementById(cat.gridId);
+      if(!grid) return;
+      grid.innerHTML = cat.icons.map(ic => `
+        <button class="icon-btn" title="${ic}" onclick="addIconCard('${ic}')">
+          <i class="${ic}"></i>
+        </button>`).join('');
+    });
+    document.getElementById('iconModal').classList.add('open');
+  }
+
+  function closeIconPicker(){
+    document.getElementById('iconModal').classList.remove('open');
+  }
+
+  function addIconCard(iconClass){
+    cards.push({ char: '', icon: iconClass, colorId: COLORS[cards.length % COLORS.length].id });
+    render();
+    closeIconPicker();
+  }
+
+  function removeCard(index){
+    cards.splice(index, 1);
+    render();
+  }
+
   function applyText(){
     const txt = document.getElementById('textInput').value.trim();
     if(!txt) return;
@@ -724,8 +887,9 @@
           <div class="card-num">${i+1}</div>
           <div class="char-display"
             style="background:${grad(col)};box-shadow:0 4px 0 ${col.sh},0 6px 14px rgba(0,0,0,0.15)">
-            ${card.char}
+            ${card.icon ? `<i class="${card.icon}" style="font-size:22px;color:white"></i>` : card.char}
           </div>
+          <button onclick="removeCard(${i})" style="background:none;border:none;font-size:16px;cursor:pointer;color:#d1d5db;padding:0 2px;flex-shrink:0" title="削除">✕</button>
           <div class="color-swatches">${swatches}</div>
 
         </div>
@@ -748,13 +912,13 @@
       const col = colorById(card.colorId);
       const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
       const charCls = ['p-char', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
-      const stars = o.stars ? starsHtml(6, 12, 22, card.char.codePointAt(0)) : '';
+      const stars = o.stars ? starsHtml(6, 12, 22, (card.icon ? card.icon.split(" ").join("").split("").reduce((a,c)=>a+c.charCodeAt(0),0) : card.char.codePointAt(0))) : '';
       return `
         <div class="p-card">
           <div class="p-card-inner">
             <div class="${bgCls}" style="background:${grad(col)}"></div>
             ${stars}
-            <div class="${charCls}">${card.char}</div>
+            <div class="${charCls}">${card.icon ? `<i class="${card.icon}"></i>` : card.char}</div>
           </div>
         </div>`;
     }).join('');
@@ -769,7 +933,7 @@
       const col = colorById(card.colorId);
       const bgCls = ['p-card-bg', o.dots?'':'bg-no-dots', o.shine?'':'bg-no-shine'].filter(Boolean).join(' ');
       const charCls = ['p-char-xl', o.stroke?'':'char-no-stroke'].filter(Boolean).join(' ');
-      const stars = o.stars ? starsHtml(6, 48, 88, card.char.codePointAt(0)) : '';
+      const stars = o.stars ? starsHtml(6, 48, 88, (card.icon ? card.icon.split(" ").join("").split("").reduce((a,c)=>a+c.charCodeAt(0),0) : card.char.codePointAt(0))) : '';
       return `
         <div class="full-page">
           <div class="p-card-xl-wrap">
@@ -777,7 +941,7 @@
               <div class="p-card-inner">
                 <div class="${bgCls}" style="background:${grad(col)}"></div>
                 ${stars}
-                <div class="${charCls}">${card.char}</div>
+                <div class="${charCls}">${card.icon ? `<i class="${card.icon}"></i>` : card.char}</div>
               </div>
             </div>
           </div>
