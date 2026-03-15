@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BINGO!</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --b: #FF3D9A;
+    --i: #FF8C00;
+    --n: #00C853;
+    --g: #00B4FF;
+    --o: #9B59FF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0d0820;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 40%, rgba(155,89,255,.35) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 60%, rgba(255,61,154,.30) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 10%, rgba(0,180,255,.20) 0%, transparent 45%);
+    animation: bgPulse 9s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes bgPulse { from{opacity:.7} to{opacity:1} }
+
+  .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .star {
+    position: absolute; border-radius: 50%;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+    animation-delay: var(--dd);
+  }
+  @keyframes twinkle { from{opacity:.15;transform:scale(.8)} to{opacity:1;transform:scale(1.3)} }
+
+  /* ── LANDSCAPE: left | right ── */
+  @media (orientation: landscape) {
+    .layout {
+      position: fixed; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      z-index: 1;
+    }
+    .left {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(4px, 1.5vh, 20px);
+      padding: clamp(6px,1.5vh,24px) 3vw;
+      overflow-y: auto;
+    }
+    .right {
+      display: flex; flex-direction: column;
+      padding: 2vh 2vw 2vh 2.2vw;
+      gap: 1vh; overflow: hidden;
+      border-left: 2px solid rgba(255,255,255,.12);
+    }
+    .col-head   { font-size: clamp(14px,2.8vw,42px); padding:.65vh .2vw; border-radius:12px; }
+    .col-headers{ gap: .45vw; }
+    .num-grid   { gap: .35vw .4vw; }
+    .num-cell   { font-size: clamp(9px,1.35vw,20px); border-radius:7px; }
+    .logo-letter{ font-size:clamp(18px,3.5vw,60px); width:clamp(26px,4.5vw,70px); height:clamp(26px,4.5vw,70px); }
+    .logo-exclaim{ font-size:clamp(16px,3.2vw,54px); }
+    .logo       { gap:.55vw; }
+    .stage-card { width:94%; }
+    .recent-strip{ width:94%; min-height:0; }
+    .draw-btn   { font-size:clamp(14px,2.5vw,34px); padding:clamp(8px,1.2vh,18px) clamp(24px,4vw,60px); }
+    .logo-hint  { font-size:clamp(8px,1vw,13px); margin-top:-2px; }
+  }
+
+  /* ── PORTRAIT: top / bottom ── */
+  @media (orientation: portrait) {
+    .layout {
+      position: fixed; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
+      z-index: 1;
+    }
+    .left {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(4px, 1vh, 16px);
+      padding: clamp(6px,1.5vh,20px) 4vw clamp(4px,1vh,16px);
+      overflow-y: auto;
+      border-bottom: 2px solid rgba(255,255,255,.12);
+    }
+    .right {
+      display: flex; flex-direction: column;
+      padding: 1.5vh 3vw 2vh;
+      gap: .8vh; overflow: hidden;
+    }
+    .col-head   { font-size:clamp(14px,4.5vw,36px); padding:.5vh .2vw; border-radius:10px; }
+    .col-headers{ gap:.6vw; }
+    .num-grid   { gap:.4vh .6vw; }
+    .num-cell   { font-size:clamp(9px,2.2vw,18px); border-radius:6px; }
+    .logo-letter{ font-size:clamp(16px,5vw,48px); width:clamp(22px,6vw,58px); height:clamp(22px,6vw,58px); }
+    .logo-exclaim{ font-size:clamp(14px,4.5vw,44px); }
+    .logo       { gap:1vw; }
+    .stage-card { width:96%; padding:clamp(6px,1.5vh,20px) 4vw; }
+    .cur-letter { height:clamp(18px,min(3.5vh,4vw),48px); font-size:clamp(14px,min(3.5vh,4vw),48px); }
+    .cur-number { font-size:clamp(50px,min(14vh,16vw),200px); }
+    .recent-strip{ width:96%; min-height:0; gap:1.2vw; }
+    .rec-chip   { width:clamp(22px,5vw,44px); height:clamp(22px,5vw,44px); font-size:clamp(10px,2vw,16px); }
+    .draw-btn   { font-size:clamp(13px,3.5vw,28px); padding:clamp(6px,1.2vh,14px) clamp(22px,7vw,52px); }
+    .counter-pill{ font-size:clamp(11px,2.5vw,16px); }
+    .reset-btn  { font-size:clamp(10px,2vw,14px); }
+    .logo-hint  { font-size:clamp(7px,1.6vw,12px); }
+  }
+
+  .logo {
+    display: flex;
+    gap: .55vw;
+    align-items: center;
+  }
+  .logo-letter {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(24px, 4vw, 60px);
+    width:  clamp(32px, 5vw, 70px);
+    height: clamp(32px, 5vw, 70px);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 13px;
+    color: white;
+    text-shadow: 0 2px 0 rgba(0,0,0,.3);
+    animation: logoFloat var(--ld) ease-in-out infinite alternate;
+  }
+  .logo-letter.b { background:linear-gradient(135deg,#FF3D9A,#ff6eb5); box-shadow:0 5px 0 #b01060,0 0 22px rgba(255,61,154,.5); --ld:2.1s }
+  .logo-letter.i { background:linear-gradient(135deg,#FF8C00,#ffc04d); box-shadow:0 5px 0 #b05e00,0 0 22px rgba(255,140,0,.5); --ld:2.4s }
+  .logo-letter.n { background:linear-gradient(135deg,#00C853,#5dff99); box-shadow:0 5px 0 #008035,0 0 22px rgba(0,200,83,.5); --ld:2.0s }
+  .logo-letter.g { background:linear-gradient(135deg,#00B4FF,#66d9ff); box-shadow:0 5px 0 #007aaf,0 0 22px rgba(0,180,255,.5); --ld:2.6s }
+  .logo-letter.o { background:linear-gradient(135deg,#9B59FF,#c29bff); box-shadow:0 5px 0 #6a2ebf,0 0 22px rgba(155,89,255,.5); --ld:2.3s }
+  .logo-exclaim {
+    font-family:'Lilita One',cursive;
+    font-size: clamp(22px, 3.8vw, 54px);
+    color:#FFD700;
+    text-shadow:0 0 18px rgba(255,215,0,.9),0 3px 0 #8a6000;
+    animation:pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes logoFloat { from{transform:translateY(0) rotate(-2deg)} to{transform:translateY(-6px) rotate(2deg)} }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+  /* Stage card */
+  .stage-card {
+    position: relative;
+    width: 94%;
+    flex-shrink: 1;
+    min-height: 0;
+    background: rgba(255,255,255,.06);
+    border: 2px solid rgba(255,255,255,.1);
+    border-radius: 30px;
+    padding: clamp(8px,2vh,28px) 2vw clamp(8px,2vh,24px);
+    text-align: center;
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 20px 55px rgba(0,0,0,.45);
+    overflow: hidden;
+    transition: box-shadow .5s ease;
+  }
+  .stage-card::before {
+    content:'';
+    position:absolute; inset:-1px;
+    border-radius:30px;
+    background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 55%,rgba(255,255,255,.04));
+    pointer-events:none;
+  }
+
+  .cur-letter {
+    font-family:'Lilita One',cursive;
+    font-size: clamp(16px, min(4vw, 5vh), 56px);
+    letter-spacing: 4px;
+    height: clamp(20px, min(4.5vw, 6vh), 64px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:translateY(8px);
+  }
+  .cur-letter.show { animation:labelSlide .45s ease .1s forwards; }
+  @keyframes labelSlide { to{opacity:1;transform:translateY(0)} }
+
+  .cur-number {
+    font-family:'Lilita One',cursive;
+    font-size: clamp(60px, min(18vw, 28vh), 240px);
+    line-height: 1;
+    color: white;
+    opacity: 0;
+    transform: scale(.3) rotate(-10deg);
+  }
+  .cur-number.show { animation:numReveal .7s cubic-bezier(.34,1.56,.64,1) forwards; }
+  @keyframes numReveal {
+    0%  {opacity:0;transform:scale(.3) rotate(-10deg)}
+    60% {opacity:1;transform:scale(1.12) rotate(3deg)}
+    80% {transform:scale(.96) rotate(-1deg)}
+    100%{opacity:1;transform:scale(1) rotate(0)}
+  }
+
+  /* Slot machine spinning state */
+  .cur-number.spinning {
+    opacity: 1;
+    transform: scale(1);
+    transition: none;
+  }
+  .cur-number.spinning-blur {
+    filter: blur(3px);
+    opacity: .8;
+  }
+
+  .stage-card.suspense {
+    animation: suspensePulse .4s ease-in-out infinite alternate;
+  }
+  @keyframes suspensePulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.012); }
+  }
+
+  /* Question mark phase */
+  .cur-number.qmark {
+    opacity: 1;
+    transform: scale(1);
+    color: rgba(255,255,255,.5);
+    animation: qPulse .5s ease-in-out infinite alternate;
+  }
+  @keyframes qPulse {
+    from { transform: scale(.95); opacity:.4; }
+    to   { transform: scale(1.05); opacity:.9; }
+  }
+
+  .idle-text {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,2vw,26px);
+    color:rgba(255,255,255,.35);
+    letter-spacing:2px;
+    padding:4vh 0;
+  }
+
+  .counter-pill {
+    display:inline-flex; align-items:baseline; gap:4px;
+    background:rgba(255,255,255,.08);
+    border:1.5px solid rgba(255,255,255,.15);
+    border-radius:50px;
+    padding:5px 18px;
+    color:rgba(255,255,255,.5);
+    font-size:clamp(12px,1.6vw,18px);
+    font-weight:700; letter-spacing:1px;
+  }
+  .counter-pill strong { color:white; font-size:1.5em; line-height:1; }
+
+  .recent-strip {
+    display:flex; gap:.55vw;
+    align-items:center; justify-content:center;
+    flex-wrap:wrap;
+    width:94%;
+    min-height:clamp(32px,4.5vh,52px);
+  }
+  .rec-chip {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(11px,1.4vw,18px);
+    width: clamp(28px,3.5vw,48px);
+    height:clamp(28px,3.5vw,48px);
+    border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    color:white;
+    box-shadow:0 3px 0 rgba(0,0,0,.3);
+    opacity:.85;
+  }
+  .rec-chip.b{background:linear-gradient(135deg,#FF3D9A,#ff6eb5)}
+  .rec-chip.i{background:linear-gradient(135deg,#FF8C00,#ffc04d)}
+  .rec-chip.n{background:linear-gradient(135deg,#00C853,#5dff99)}
+  .rec-chip.g{background:linear-gradient(135deg,#00B4FF,#66d9ff)}
+  .rec-chip.o{background:linear-gradient(135deg,#9B59FF,#c29bff)}
+  .rec-chip.newest{opacity:1;animation:recPop .55s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes recPop{from{transform:scale(0) rotate(-25deg)} to{transform:scale(1) rotate(0)}}
+
+  .draw-btn {
+    font-family:'Lilita One',cursive;
+    font-size:clamp(16px,2.5vw,34px);
+    color:white;
+    background:linear-gradient(135deg,#FF3D9A 0%,#FF8C00 55%,#FFD700 100%);
+    border:none; border-radius:50px;
+    padding:clamp(10px,1.6vh,20px) clamp(32px,4.5vw,68px);
+    cursor:pointer;
+    box-shadow:0 7px 0 rgba(0,0,0,.35),0 0 40px rgba(255,61,154,.35);
+    text-shadow:0 2px 4px rgba(0,0,0,.3);
+    letter-spacing:2px;
+    position:relative; overflow:hidden;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .draw-btn::before {
+    content:'';
+    position:absolute;top:0;left:-100%;
+    width:55%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+    transform:skewX(-20deg);
+    animation:sheen 3.5s ease-in-out infinite;
+  }
+  @keyframes sheen{0%{left:-100%}55%,100%{left:155%}}
+  .draw-btn:hover  {transform:translateY(-3px);box-shadow:0 10px 0 rgba(0,0,0,.35),0 0 60px rgba(255,61,154,.5)}
+  .draw-btn:active {transform:translateY(4px); box-shadow:0 3px 0 rgba(0,0,0,.35)}
+  .draw-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+  .reset-btn {
+    font-family:'Nunito',sans-serif;
+    font-size:clamp(11px,1.3vw,16px);
+    font-weight:900;
+    color:rgba(255,255,255,.6);
+    background:rgba(255,255,255,.08);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:50px;
+    padding:7px 20px;
+    cursor:pointer; letter-spacing:1px;
+    transition:all .2s;
+  }
+  .reset-btn:hover{background:rgba(255,255,255,.18);color:white;}
+  .btn-row{display:flex;gap:10px;align-items:center;}
+
+  /* ═══════════════ RIGHT panel base ═══════════════ */
+  .col-head {
+    font-family:'Lilita One',cursive;
+    text-align:center; color:white;
+    text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+  .col-headers {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    flex-shrink: 0;
+  }
+  .num-grid {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(15,1fr);
+    flex: 1;
+    min-height: 0;
+  }
+  .col-head.b{background:linear-gradient(135deg,#FF3D9A,#ff6eb5);box-shadow:0 4px 0 #b01060}
+  .col-head.i{background:linear-gradient(135deg,#FF8C00,#ffc04d);box-shadow:0 4px 0 #b05e00}
+  .col-head.n{background:linear-gradient(135deg,#00C853,#5dff99);box-shadow:0 4px 0 #008035}
+  .col-head.g{background:linear-gradient(135deg,#00B4FF,#66d9ff);box-shadow:0 4px 0 #007aaf}
+  .col-head.o{background:linear-gradient(135deg,#9B59FF,#c29bff);box-shadow:0 4px 0 #6a2ebf}
+  .num-cell {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(9px,1.35vw,20px);
+    display:flex; align-items:center; justify-content:center;
+    border-radius:7px;
+    background:rgba(255,255,255,.05);
+    color:rgba(255,255,255,.2);
+    border:1.5px solid rgba(255,255,255,.07);
+    transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    line-height:1;
+  }
+  .num-cell.called { color:white; border-color:transparent; }
+  .num-cell.called.b{background:linear-gradient(135deg,#FF3D9A,#ff6eb5);box-shadow:0 2px 10px rgba(255,61,154,.5)}
+  .num-cell.called.i{background:linear-gradient(135deg,#FF8C00,#ffc04d);box-shadow:0 2px 10px rgba(255,140,0,.5)}
+  .num-cell.called.n{background:linear-gradient(135deg,#00C853,#5dff99);box-shadow:0 2px 10px rgba(0,200,83,.5)}
+  .num-cell.called.g{background:linear-gradient(135deg,#00B4FF,#66d9ff);box-shadow:0 2px 10px rgba(0,180,255,.5)}
+  .num-cell.called.o{background:linear-gradient(135deg,#9B59FF,#c29bff);box-shadow:0 2px 10px rgba(155,89,255,.5)}
+  .num-cell.just-called{animation:cellPop .55s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes cellPop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+  /* ── FX ── */
+  .confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
+  .piece{
+    position:absolute;top:-20px;
+    animation:fall var(--dur) var(--del) ease-in forwards;
+  }
+  @keyframes fall{
+    0%  {transform:translateX(0) translateY(-20px) rotate(0);opacity:1}
+    100%{transform:translateX(var(--dx)) translateY(110vh) rotate(var(--rot));opacity:.15}
+  }
+  .burst-layer{position:fixed;inset:0;pointer-events:none;z-index:50;display:flex;align-items:center;justify-content:center}
+  .ring{
+    position:absolute;border-radius:50%;
+    border:4px solid white;
+    animation:ringOut .75s ease-out forwards;opacity:0;
+  }
+  @keyframes ringOut{0%{width:0;height:0;opacity:.75}100%{width:80vmin;height:80vmin;opacity:0}}
+
+  /* Finished */
+  .finished{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(0,0,0,.88);
+    backdrop-filter:blur(10px);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:3vh;
+    opacity:0;pointer-events:none;
+    transition:opacity .5s;
+  }
+  .finished.show{opacity:1;pointer-events:all}
+  .finished-title{
+    font-family:'Lilita One',cursive;
+    font-size:clamp(36px,8vw,96px);
+    color:#FFD700;
+    text-shadow:0 0 40px rgba(255,215,0,.8),0 4px 0 rgba(0,0,0,.5);
+    text-align:center;
+    animation:bigBounce .8s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes bigBounce{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  .finished-sub{font-size:clamp(14px,2.2vw,28px);color:rgba(255,255,255,.65);font-weight:700}
+  .finished-btn{
+    font-family:'Lilita One',cursive;
+    font-size:clamp(15px,2vw,26px);
+    color:white;
+    background:linear-gradient(135deg,#FF3D9A,#9B59FF);
+    border:none;border-radius:50px;
+    padding:15px 50px;cursor:pointer;
+    box-shadow:0 6px 0 rgba(0,0,0,.3),0 0 30px rgba(255,61,154,.4);
+    transition:all .15s;margin-top:8px;
+  }
+  .finished-btn:hover{transform:translateY(-3px);box-shadow:0 9px 0 rgba(0,0,0,.3),0 0 50px rgba(255,61,154,.6)}
+
+  /* ── CONGRATULATIONS overlay ── */
+  .congrats-overlay {
+    position: fixed; inset: 0; z-index: 400;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: clamp(8px, 2.5vh, 32px);
+    padding: 4vmin 5vmin;
+    background: rgba(0,0,0,.0);
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    transition: background .4s ease, opacity .4s ease;
+  }
+  .congrats-overlay.show {
+    background: rgba(5,0,20,.82);
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(6px);
+  }
+
+  .congrats-word {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(24px, min(9vw, 13vh), 140px);
+    letter-spacing: clamp(1px, .4vw, 5px);
+    text-align: center;
+    line-height: 1.1;
+    width: 100%;
+    word-break: break-word;
+    opacity: 0;
+    transform: scale(0.2) rotate(-8deg);
+    background: linear-gradient(135deg, #FFD700, #FF3D9A, #00B4FF, #00C853, #9B59FF, #FFD700);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(255,215,0,.6));
+    animation: none;
+  }
+  .congrats-overlay.show .congrats-word {
+    animation: congratsReveal .8s cubic-bezier(.34,1.56,.64,1) .1s forwards,
+               rainbowShift 3s linear infinite;
+  }
+  @keyframes congratsReveal {
+    0%   { opacity:0; transform:scale(.2) rotate(-8deg); }
+    60%  { opacity:1; transform:scale(1.06) rotate(2deg); }
+    80%  {            transform:scale(.97) rotate(-1deg); }
+    100% { opacity:1; transform:scale(1) rotate(0); }
+  }
+  @keyframes rainbowShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .congrats-sub {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(12px, min(2.5vw, 4vh), 40px);
+    color: rgba(255,255,255,.85);
+    letter-spacing: 2px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .congrats-overlay.show .congrats-sub {
+    animation: subSlide .6s ease .55s forwards;
+  }
+  @keyframes subSlide {
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .congrats-close-btn {
+    font-family: 'Lilita One', cursive;
+    font-size: clamp(12px, min(1.8vw, 2.5vh), 22px);
+    color: white;
+    background: rgba(255,255,255,.12);
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 50px;
+    padding: clamp(8px,1.2vh,14px) clamp(20px,3vw,36px);
+    cursor: pointer;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .congrats-overlay.show .congrats-close-btn {
+    animation: subSlide .6s ease .85s forwards;
+  }
+  .congrats-close-btn:hover { background:rgba(255,255,255,.25); border-color:white; }
+
+  /* Logo clickable hint */
+  .logo { cursor: pointer; }
+  .logo:hover .logo-letter { filter: brightness(1.2); }
+  .logo-hint {
+    font-size: clamp(9px, 1.1vw, 13px);
+    color: rgba(255,255,255,.3);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: -6px;
+    animation: hintPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes hintPulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+
+  /* Reset modal */
+  .reset-modal {
+    position:fixed;inset:0;z-index:300;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .25s;
+  }
+  .reset-modal.show{opacity:1;pointer-events:all;}
+  .reset-box {
+    background:linear-gradient(135deg,#1a0a3a,#0d1b4b);
+    border:2px solid rgba(255,255,255,.15);
+    border-radius:24px;
+    padding:36px 44px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    display:flex;flex-direction:column;gap:20px;align-items:center;
+    animation:modalPop .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes modalPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+  .reset-box p {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(18px,2.5vw,26px);
+    color:white;letter-spacing:1px;
+  }
+  .reset-box-btns{display:flex;gap:14px;}
+  .modal-yes {
+    font-family:'Lilita One',cursive;font-size:clamp(15px,1.8vw,22px);
+    color:white;background:linear-gradient(135deg,#FF3D9A,#9B59FF);
+    border:none;border-radius:50px;padding:12px 36px;cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,.3);transition:all .15s;
+  }
+  .modal-yes:hover{transform:translateY(-2px);}
+  .modal-no {
+    font-family:'Lilita One',cursive;font-size:clamp(15px,1.8vw,22px);
+    color:rgba(255,255,255,.7);background:rgba(255,255,255,.1);
+    border:2px solid rgba(255,255,255,.2);border-radius:50px;padding:12px 36px;cursor:pointer;
+    transition:all .15s;
+  }
+  .modal-no:hover{background:rgba(255,255,255,.2);color:white;}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="confetti-layer" id="confettiLayer"></div>
+<div class="burst-layer" id="burstLayer"></div>
+
+<div class="finished" id="finished">
+  <div class="finished-title">🎊 ALL DONE! 🎊</div>
+  <div class="finished-sub">All 75 numbers have been called!</div>
+  <button class="finished-btn" onclick="resetGame()">🔄 Play Again</button>
+</div>
+
+<div class="reset-modal" id="resetModal">
+  <div class="reset-box">
+    <p>🔄 Reset the game?</p>
+    <div class="reset-box-btns">
+      <button class="modal-yes" onclick="resetGame()">Yes, reset!</button>
+      <button class="modal-no"  onclick="cancelReset()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONGRATULATIONS overlay -->
+<div class="congrats-overlay" id="congratsOverlay">
+  <div class="congrats-word">CONGRATULATIONS!</div>
+  <div class="congrats-sub">🎊 WE HAVE A WINNER! 🎊</div>
+  <button class="congrats-close-btn" onclick="hideCongrats()">✕ CLOSE</button>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="logo" onclick="showCongrats()" title="BINGO!">
+      <div class="logo-letter b">B</div>
+      <div class="logo-letter i">I</div>
+      <div class="logo-letter n">N</div>
+      <div class="logo-letter g">G</div>
+      <div class="logo-letter o">O</div>
+      <div class="logo-exclaim">!</div>
+    </div>
+    <div class="logo-hint">👆 TAP WHEN SOMEONE GETS BINGO!</div>
+
+    <div class="stage-card" id="stageCard">
+      <div class="cur-letter" id="curLetter"></div>
+      <div class="cur-number" id="curNumber">
+        <span class="idle-text">PRESS TO START!</span>
+      </div>
+    </div>
+
+    <div class="recent-strip" id="recentStrip"></div>
+
+    <div class="btn-row">
+      <button class="draw-btn" id="drawBtn" onclick="drawNumber()">🎲 DRAW!</button>
+      <div class="counter-pill"><strong id="calledCount">0</strong>&nbsp;/ 75</div>
+      <button class="reset-btn" onclick="confirmReset()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="col-headers">
+      <div class="col-head b">B</div>
+      <div class="col-head i">I</div>
+      <div class="col-head n">N</div>
+      <div class="col-head g">G</div>
+      <div class="col-head o">O</div>
+    </div>
+    <div class="num-grid" id="numGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const LETTER_COLOR = {B:'b',I:'i',N:'n',G:'g',O:'o'};
+const LETTER_HEX   = {B:'#FF3D9A',I:'#FF8C00',N:'#00C853',G:'#00B4FF',O:'#9B59FF'};
+
+/* ══════════════════════════════════
+   SOUND ENGINE  (Web Audio API)
+   新しいContextを毎回作成 → サスペンド問題を回避
+══════════════════════════════════ */
+let tickIntervalId = null;
+
+function makeCtx(){
+  return new (window.AudioContext || window.webkitAudioContext)();
+}
+
+// 上昇ピッチのティック音（スロット回転中）
+function playTick(pitch, vol){
+  try {
+    const ctx = makeCtx();
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.value = pitch;
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.07);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.07);
+    osc.onended = () => ctx.close();
+  } catch(e){}
+}
+
+// ドラムロール：ピッチと速度が上がっていく
+function startDrumroll(totalMs, myGen){
+  const t0 = performance.now();
+  function tick(){
+    if(drawGen !== myGen){ stopDrumroll(); return; }
+    const e = performance.now() - t0;
+    if(e >= totalMs){ stopDrumroll(); return; }
+    const p        = Math.min(e / totalMs, 1);
+    const pitch    = 160 + p * 380;
+    const vol      = 0.07 + p * 0.20;
+    const interval = 200 - p * 150;
+    playTick(pitch, vol);
+    tickIntervalId = setTimeout(tick, interval);
+  }
+  tick();
+}
+function stopDrumroll(){
+  if(tickIntervalId){ clearTimeout(tickIntervalId); tickIntervalId = null; }
+}
+
+// ボタンクリック音
+function playClick(){
+  try {
+    const ctx = makeCtx();
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.12);
+    osc.onended = () => ctx.close();
+  } catch(e){}
+}
+
+// 数字確定ファンファーレ
+function playReveal(hex){
+  try {
+    const ctx = makeCtx();
+    const rootMap = {'#FF3D9A':523,'#FF8C00':587,'#00C853':659,'#00B4FF':698,'#9B59FF':784};
+    const root  = rootMap[hex] || 523;
+    const notes = [root, root*1.25, root*1.5, root*2];
+
+    // キックドラム
+    const kick  = ctx.createOscillator();
+    const kGain = ctx.createGain();
+    kick.connect(kGain); kGain.connect(ctx.destination);
+    kick.type = 'sine';
+    kick.frequency.setValueAtTime(200, ctx.currentTime);
+    kick.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+    kGain.gain.setValueAtTime(0.6, ctx.currentTime);
+    kGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+    kick.start(); kick.stop(ctx.currentTime + 0.25);
+
+    // アルペジオ和音
+    notes.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t    = ctx.currentTime + i * 0.06;
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+      osc.start(t); osc.stop(t + 0.65);
+      if(i === notes.length-1) osc.onended = () => ctx.close();
+    });
+  } catch(e){}
+}
+
+// 全番号終了ジングル
+function playFinale(){
+  try {
+    const ctx    = makeCtx();
+    const melody = [523,659,784,1047,784,1047,1319];
+    const times  = [0, .13, .26, .39, .56, .69, .82];
+    melody.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t    = ctx.currentTime + times[i];
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.3, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+      osc.start(t); osc.stop(t + 0.42);
+      if(i === melody.length-1) osc.onended = () => ctx.close();
+    });
+  } catch(e){}
+}
+
+let remaining=[], called=[], busy=false;
+let rafId=null, spinTimeoutId=null, drawGen=0;
+
+function letterFor(n){
+  if(n<=15)return'B'; if(n<=30)return'I'; if(n<=45)return'N'; if(n<=60)return'G'; return'O';
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]]}}
+
+function initGame(){
+  // Cancel any running animation and invalidate in-flight callbacks
+  drawGen++;
+  stopDrumroll();
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+  if(spinTimeoutId){ clearTimeout(spinTimeoutId); spinTimeoutId=null; }
+
+  remaining=Array.from({length:75},(_,i)=>i+1);
+  called=[];busy=false;
+  shuffle(remaining);
+  buildGrid();
+  renderRecent();
+  document.getElementById('calledCount').textContent='0';
+  document.getElementById('drawBtn').disabled=false;
+  document.getElementById('curLetter').className='cur-letter';
+  document.getElementById('curLetter').textContent='';
+  document.getElementById('curNumber').innerHTML='<span class="idle-text">PRESS TO START!</span>';
+  document.getElementById('curNumber').className='cur-number';
+  const card=document.getElementById('stageCard');
+  card.style.boxShadow='';
+  card.classList.remove('suspense');
+  document.getElementById('finished').classList.remove('show');
+}
+
+function buildGrid(){
+  const grid=document.getElementById('numGrid');
+  grid.innerHTML='';
+  const cells={};
+  for(let n=1;n<=75;n++){
+    const el=document.createElement('div');
+    el.className='num-cell'; el.id=`cell-${n}`; el.textContent=n;
+    cells[n]=el;
+  }
+  // fill row-by-row across 5 cols (B col first, then I, N, G, O)
+  for(let r=0;r<15;r++){
+    for(let c=0;c<5;c++){
+      grid.appendChild(cells[c*15+r+1]);
+    }
+  }
+}
+
+function markCell(n,animate){
+  const el=document.getElementById(`cell-${n}`);
+  if(!el)return;
+  const cls=LETTER_COLOR[letterFor(n)];
+  el.className=`num-cell called ${cls}`;
+  if(animate){
+    el.classList.add('just-called');
+    setTimeout(()=>el.classList.remove('just-called'),600);
+  }
+}
+
+function renderRecent(){
+  const strip=document.getElementById('recentStrip');
+  strip.innerHTML='';
+  const recent=called.slice(-5).reverse();
+  recent.forEach((n,i)=>{
+    const cls=LETTER_COLOR[letterFor(n)];
+    const el=document.createElement('div');
+    el.className=`rec-chip ${cls}${i===0?' newest':''}`;
+    el.textContent=n;
+    strip.appendChild(el);
+  });
+  if(called.length>5){
+    const dots=document.createElement('div');
+    dots.style.cssText='font-family:"Fredoka One",cursive;font-size:clamp(14px,2vw,22px);color:rgba(255,255,255,.4);letter-spacing:2px;align-self:center;';
+    dots.textContent='…';
+    strip.appendChild(dots);
+  }
+}
+
+function drawNumber(){
+  if(busy||remaining.length===0)return;
+  busy=true;
+  document.getElementById('drawBtn').disabled=true;
+
+  const n=remaining.pop();
+  called.push(n);
+  const letter=letterFor(n);
+  const hex=LETTER_HEX[letter];
+
+  const labelEl=document.getElementById('curLetter');
+  const numEl=document.getElementById('curNumber');
+  const card=document.getElementById('stageCard');
+
+  // All BINGO letters & hex for spinning through
+  const allLetters=['B','I','N','G','O'];
+  const allHex=['#FF3D9A','#FF8C00','#00C853','#00B4FF','#9B59FF'];
+
+  // ── Phase 1: Question marks + suspense build-up (0–700ms) ──
+  numEl.textContent='?';
+  numEl.className='cur-number qmark';
+  numEl.style.color='rgba(255,255,255,.6)';
+  numEl.style.textShadow='0 0 30px rgba(255,255,255,.4)';
+  labelEl.textContent='?';
+  labelEl.style.color='rgba(255,255,255,.5)';
+  labelEl.style.textShadow='none';
+  labelEl.className='cur-letter show';
+  card.classList.add('suspense');
+  card.style.boxShadow='inset 0 0 60px rgba(255,255,255,.08),0 20px 55px rgba(0,0,0,.45)';
+
+  // ── Phase 2: Fast slot spin ──
+  const TOTAL_SPIN = 2800;
+  const FAST_END   = 1800;
+
+  let spinStart = null;
+  let lastFlip  = 0;
+  const myGen = ++drawGen; // invalidation token
+
+  playClick();
+  startDrumroll(TOTAL_SPIN + 200, myGen);
+
+  function spinFrame(ts){
+    if(myGen !== drawGen) return; // reset was called → abort
+    if(!spinStart) spinStart = ts;
+    const elapsed = ts - spinStart;
+
+    if(elapsed >= TOTAL_SPIN){
+      stopDrumroll();
+      card.classList.remove('suspense');
+
+      labelEl.textContent=letter;
+      labelEl.style.color=hex;
+      labelEl.style.textShadow=`0 0 18px ${hex}`;
+      labelEl.className='cur-letter show';
+
+      numEl.textContent=n;
+      numEl.style.color='white';
+      numEl.style.textShadow=`0 6px 0 rgba(0,0,0,.3),0 0 50px ${hex}`;
+      numEl.className='cur-number show';
+
+      card.style.boxShadow=`inset 0 0 80px ${hex}28,0 20px 55px rgba(0,0,0,.45),0 0 50px ${hex}35`;
+      setTimeout(()=>{ if(myGen===drawGen) card.style.boxShadow=''; },1400);
+
+      markCell(n,true);
+      renderRecent();
+      document.getElementById('calledCount').textContent=called.length;
+
+      burst(hex);
+      confetti(hex);
+      playReveal(hex);
+
+      setTimeout(()=>{
+        if(myGen!==drawGen) return;
+        busy=false;
+        if(remaining.length>0){
+          document.getElementById('drawBtn').disabled=false;
+        } else {
+          setTimeout(()=>{
+            if(myGen!==drawGen) return;
+            document.getElementById('finished').classList.add('show');
+            confetti('#FFD700',160);confetti('#FF3D9A',100);confetti('#9B59FF',100);
+            playFinale();
+          },900);
+        }
+      },750);
+      return;
+    }
+
+    const progress = Math.min(elapsed / TOTAL_SPIN, 1);
+    const eased    = progress * progress;
+    const interval = 55 + eased * 320;
+
+    if(ts - lastFlip >= interval){
+      lastFlip = ts;
+      const rn = 1 + Math.floor(Math.random()*75);
+      const ri = Math.floor(Math.random()*5);
+      const rHex = allHex[ri];
+
+      if(elapsed > FAST_END){
+        labelEl.textContent = letter;
+        labelEl.style.color = hex;
+        labelEl.style.textShadow = `0 0 14px ${hex}`;
+      } else {
+        labelEl.textContent = allLetters[ri];
+        labelEl.style.color = rHex;
+        labelEl.style.textShadow = `0 0 14px ${rHex}`;
+      }
+
+      numEl.textContent = (elapsed > FAST_END && Math.random()>.45) ? n : rn;
+      numEl.className   = 'cur-number spinning';
+      numEl.style.color = elapsed > FAST_END ? 'white' : `rgba(255,255,255,.85)`;
+      numEl.style.textShadow = elapsed > FAST_END
+        ? `0 0 30px ${hex}`
+        : `0 0 20px ${rHex}`;
+
+      card.style.boxShadow = `inset 0 0 50px ${elapsed>FAST_END?hex:rHex}22,0 20px 55px rgba(0,0,0,.45)`;
+    }
+
+    rafId = requestAnimationFrame(spinFrame);
+  }
+
+  // Small delay before spin starts
+  spinTimeoutId = setTimeout(()=>{ rafId = requestAnimationFrame(spinFrame); }, 200);
+}
+
+function burst(color){
+  const layer=document.getElementById('burstLayer');
+  for(let i=0;i<3;i++){
+    const r=document.createElement('div');
+    r.className='ring'; r.style.borderColor=color;
+    r.style.animationDelay=`${i*.12}s`;
+    layer.appendChild(r);
+    setTimeout(()=>r.remove(),900);
+  }
+}
+
+function confetti(base,count=65){
+  const layer=document.getElementById('confettiLayer');
+  const pal=[base,'#FFD700','#FF3D9A','#00B4FF','#9B59FF','#00C853','#FF8C00','#fff'];
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');
+    p.className='piece';
+    const col=pal[0|Math.random()*pal.length];
+    const dur=1.4+Math.random()*1.6, del=Math.random()*.5;
+    const dx=(Math.random()-.5)*500, rot=(Math.random()-.5)*720;
+    const w=5+Math.random()*9, h=7+Math.random()*11;
+    p.style.cssText=`
+      left:${Math.random()*100}vw;
+      background:${col};width:${w}px;height:${h}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      --dur:${dur}s;--del:${del}s;--dx:${dx}px;--rot:${rot}deg;
+    `;
+    layer.appendChild(p);
+    setTimeout(()=>p.remove(),(dur+del)*1000+200);
+  }
+}
+
+function showCongrats(){
+  const ov   = document.getElementById('congratsOverlay');
+  const word = ov.querySelector('.congrats-word');
+  const sub  = ov.querySelector('.congrats-sub');
+  const btn  = ov.querySelector('.congrats-close-btn');
+  // Reset animations so they replay each time
+  [word, sub, btn].forEach(el => { el.style.animation='none'; void el.offsetWidth; el.style.animation=''; });
+  ov.classList.add('show');
+  confetti('#FFD700',120); confetti('#FF3D9A',80);
+  confetti('#00B4FF',80);  confetti('#9B59FF',60);
+  playFinale();
+}
+function hideCongrats(){
+  document.getElementById('congratsOverlay').classList.remove('show');
+}
+
+function confirmReset(){
+  document.getElementById('resetModal').classList.add('show');
+}
+function resetGame(){
+  document.getElementById('resetModal').classList.remove('show');
+  initGame();
+}
+function cancelReset(){
+  document.getElementById('resetModal').classList.remove('show');
+}
+
+// Stars
+(function(){
+  const c=document.getElementById('stars');
+  const cols=['#fff','#FFD700','#FF9EE1','#9BE8FF'];
+  for(let i=0;i<90;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=1+Math.random()*2.5;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[0|Math.random()*cols.length]};--d:${1.2+Math.random()*2.8}s;--dd:${Math.random()*3}s;`;
+    c.appendChild(s);
+  }
+})();
+
+initGame();
+</script>
+</body>
+</html>
