@@ -504,6 +504,185 @@
   }
   .congrats-close-btn:hover { background:rgba(255,255,255,.25); border-color:white; }
 
+  /* ── Name input modal ── */
+  .name-modal {
+    position:fixed;inset:0;z-index:410;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .25s;
+  }
+  .name-modal.show{opacity:1;pointer-events:all;}
+  .name-box {
+    background:linear-gradient(135deg,#1a0a3a,#0d1b4b);
+    border:2px solid rgba(255,255,255,.15);
+    border-radius:28px;
+    padding: clamp(24px,4vh,44px) clamp(28px,5vw,52px);
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    display:flex;flex-direction:column;gap:clamp(10px,2vh,20px);align-items:center;
+    animation:modalPop .3s cubic-bezier(.34,1.56,.64,1);
+    width: min(90vw, 480px);
+  }
+  .name-box-title {
+    font-family:'Lilita One',cursive;
+    font-size:clamp(28px,6vw,56px);
+    color:#FFD700;
+    text-shadow:0 0 20px rgba(255,215,0,.7), 0 3px 0 #8a6000;
+  }
+  .name-box-sub {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(16px,2.5vw,26px);
+    color:rgba(255,255,255,.75);
+    letter-spacing:1px;
+  }
+  .name-input {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(18px,3vw,28px);
+    width:100%;
+    background:rgba(255,255,255,.1);
+    border:2px solid rgba(255,255,255,.25);
+    border-radius:14px;
+    padding:10px 18px;
+    color:white;
+    text-align:center;
+    outline:none;
+    letter-spacing:1px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .name-input::placeholder{color:rgba(255,255,255,.35);}
+  .name-input:focus{border-color:#FFD700;box-shadow:0 0 16px rgba(255,215,0,.3);}
+  .name-box-btns{display:flex;gap:14px;}
+
+  /* ── Winner name in congrats ── */
+  .congrats-winner-name {
+    font-family:'Lilita One',cursive;
+    font-size:clamp(20px,min(5vw,8vh),72px);
+    color:white;
+    text-shadow:0 0 30px rgba(255,255,255,.5), 0 3px 0 rgba(0,0,0,.4);
+    letter-spacing:2px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(16px);
+  }
+  .congrats-overlay.show .congrats-winner-name {
+    animation:subSlide .6s ease .35s forwards;
+  }
+
+  /* ── Winners list modal ── */
+  .winners-modal {
+    position:fixed;inset:0;z-index:350;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .25s;
+  }
+  .winners-modal.show{opacity:1;pointer-events:all;}
+  .winners-box {
+    background:linear-gradient(135deg,#1a0a3a,#0d1b4b);
+    border:2px solid rgba(255,255,255,.15);
+    border-radius:28px;
+    padding:clamp(20px,3.5vh,40px) clamp(24px,4vw,48px);
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    display:flex;flex-direction:column;gap:clamp(8px,1.5vh,18px);align-items:center;
+    animation:modalPop .3s cubic-bezier(.34,1.56,.64,1);
+    width:min(92vw,480px);
+    max-height:80vh;
+  }
+  .winners-title {
+    font-family:'Lilita One',cursive;
+    font-size:clamp(22px,4vw,38px);
+    color:#FFD700;
+    text-shadow:0 0 16px rgba(255,215,0,.6);
+    flex-shrink:0;
+  }
+  .winners-list {
+    width:100%;
+    overflow-y:auto;
+    display:flex;flex-direction:column;gap:8px;
+    flex:1;min-height:0;
+  }
+  .winners-list::-webkit-scrollbar{width:4px;}
+  .winners-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:4px;}
+  .winner-row {
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    padding:10px 16px;
+  }
+  .winner-rank {
+    font-family:'Lilita One',cursive;
+    font-size:clamp(16px,2.5vw,24px);
+    width:2em;text-align:center;flex-shrink:0;
+  }
+  .winner-name {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(15px,2.2vw,22px);
+    color:white;flex:1;text-align:left;
+    letter-spacing:.5px;
+  }
+  .winner-num {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(11px,1.5vw,15px);
+    color:rgba(255,255,255,.45);
+    flex-shrink:0;
+  }
+  .winners-empty {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(15px,2vw,20px);
+    color:rgba(255,255,255,.4);
+    padding:20px 0;
+  }
+
+  /* ── Winners button ── */
+  .winners-btn {
+    font-family:'Nunito',sans-serif;
+    font-size:clamp(11px,1.3vw,16px);
+    font-weight:900;
+    color:rgba(255,255,255,.6);
+    background:rgba(255,255,255,.08);
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:50px;
+    padding:7px 16px;
+    cursor:pointer;letter-spacing:1px;
+    transition:all .2s;
+  }
+  .winners-btn:hover{background:rgba(255,215,0,.2);color:#FFD700;border-color:rgba(255,215,0,.4);}
+  .winners-btn.has-winners{color:#FFD700;border-color:rgba(255,215,0,.35);}
+
+  /* Inline name editing */
+  .editable-name {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 2px 6px;
+    transition: background .15s;
+  }
+  .editable-name:hover { background: rgba(255,255,255,.1); }
+  .editable-name::after {
+    content: ' ✏️';
+    font-size: .7em;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .editable-name:hover::after { opacity: .6; }
+  .editable-name.editing { background: rgba(255,255,255,.08); padding:0; }
+  .inline-name-input {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(15px,2.2vw,22px);
+    background: rgba(255,255,255,.12);
+    border: 1.5px solid #FFD700;
+    border-radius: 8px;
+    padding: 3px 10px;
+    color: white;
+    outline: none;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(255,215,0,.25);
+  }
+
   /* Logo clickable hint */
   .logo { cursor: pointer; }
   .logo:hover .logo-letter { filter: brightness(1.2); }
@@ -583,11 +762,34 @@
   </div>
 </div>
 
+<!-- Name input modal (shown first when logo tapped) -->
+<div class="name-modal" id="nameModal">
+  <div class="name-box">
+    <div class="name-box-title">🎉 BINGO!</div>
+    <div class="name-box-sub">Winner's name?</div>
+    <input class="name-input" id="nameInput" type="text" maxlength="20" placeholder="Enter name…" autocomplete="off">
+    <div class="name-box-btns">
+      <button class="modal-yes" onclick="submitWinner()">🏆 Register!</button>
+      <button class="modal-no"  onclick="cancelName()">Skip</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONGRATULATIONS overlay -->
 <div class="congrats-overlay" id="congratsOverlay">
   <div class="congrats-word">CONGRATULATIONS!</div>
+  <div class="congrats-winner-name" id="congratsWinnerName"></div>
   <div class="congrats-sub">🎊 WE HAVE A WINNER! 🎊</div>
   <button class="congrats-close-btn" onclick="hideCongrats()">✕ CLOSE</button>
+</div>
+
+<!-- Winners list popup -->
+<div class="winners-modal" id="winnersModal">
+  <div class="winners-box">
+    <div class="winners-title">🏆 BINGO WINNERS</div>
+    <div class="winners-list" id="winnersList"></div>
+    <button class="modal-no" style="margin-top:8px" onclick="closeWinners()">✕ Close</button>
+  </div>
 </div>
 
 <div class="layout">
@@ -615,8 +817,9 @@
 
     <div class="btn-row">
       <button class="draw-btn" id="drawBtn" onclick="drawNumber()">🎲 DRAW!</button>
-      <div class="counter-pill"><strong id="calledCount">0</strong>&nbsp;/ 75</div>
+      <div class="counter-pill"><strong id="calledCount">0</strong>&nbsp;/ 72</div>
       <button class="reset-btn" onclick="confirmReset()">↺ Reset</button>
+      <button class="winners-btn" onclick="openWinners()" id="winnersBtn" title="Winner list">🏆 <span id="winnerCount">0</span></button>
     </div>
   </div>
 
@@ -761,7 +964,7 @@ function playFinale(){
   } catch(e){}
 }
 
-let remaining=[], called=[], busy=false;
+let remaining=[], called=[], busy=false, winners=[];
 let rafId=null, spinTimeoutId=null, drawGen=0;
 
 function letterFor(n){
@@ -776,8 +979,8 @@ function initGame(){
   if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
   if(spinTimeoutId){ clearTimeout(spinTimeoutId); spinTimeoutId=null; }
 
-  remaining=Array.from({length:75},(_,i)=>i+1);
-  called=[];busy=false;
+  remaining=Array.from({length:72},(_,i)=>i+1);
+  called=[];busy=false;winners=[];
   shuffle(remaining);
   buildGrid();
   renderRecent();
@@ -791,21 +994,42 @@ function initGame(){
   card.style.boxShadow='';
   card.classList.remove('suspense');
   document.getElementById('finished').classList.remove('show');
+  updateWinnersBtn();
 }
 
 function buildGrid(){
   const grid=document.getElementById('numGrid');
   grid.innerHTML='';
-  const cells={};
-  for(let n=1;n<=75;n++){
-    const el=document.createElement('div');
-    el.className='num-cell'; el.id=`cell-${n}`; el.textContent=n;
-    cells[n]=el;
-  }
-  // fill row-by-row across 5 cols (B col first, then I, N, G, O)
-  for(let r=0;r<15;r++){
+  // B:1-15(15), I:16-30(15), N:31-45(15), G:46-60(15), O:61-72(12)
+  const colRanges = [
+    {start:1,  count:15}, // B
+    {start:16, count:15}, // I
+    {start:31, count:15}, // N
+    {start:46, count:15}, // G
+    {start:61, count:12}, // O (61-72)
+  ];
+  const maxRows = 15;
+  // Build cells per column, pad shorter columns with empty slots
+  const cols = colRanges.map(({start,count})=>{
+    const cells=[];
+    for(let i=0;i<count;i++){
+      const el=document.createElement('div');
+      el.className='num-cell'; el.id=`cell-${start+i}`; el.textContent=start+i;
+      cells.push(el);
+    }
+    // pad with blank divs
+    for(let i=count;i<maxRows;i++){
+      const el=document.createElement('div');
+      el.className='num-cell empty';
+      el.style.cssText='background:transparent;border-color:transparent;';
+      cells.push(el);
+    }
+    return cells;
+  });
+  // Append row by row
+  for(let r=0;r<maxRows;r++){
     for(let c=0;c<5;c++){
-      grid.appendChild(cells[c*15+r+1]);
+      grid.appendChild(cols[c][r]);
     }
   }
 }
@@ -934,7 +1158,7 @@ function drawNumber(){
 
     if(ts - lastFlip >= interval){
       lastFlip = ts;
-      const rn = 1 + Math.floor(Math.random()*75);
+      const rn = 1 + Math.floor(Math.random()*72);
       const ri = Math.floor(Math.random()*5);
       const rHex = allHex[ri];
 
@@ -998,19 +1222,132 @@ function confetti(base,count=65){
 }
 
 function showCongrats(){
-  const ov   = document.getElementById('congratsOverlay');
-  const word = ov.querySelector('.congrats-word');
-  const sub  = ov.querySelector('.congrats-sub');
-  const btn  = ov.querySelector('.congrats-close-btn');
-  // Reset animations so they replay each time
-  [word, sub, btn].forEach(el => { el.style.animation='none'; void el.offsetWidth; el.style.animation=''; });
+  // Step 1: show name input
+  const modal = document.getElementById('nameModal');
+  const input = document.getElementById('nameInput');
+  input.value = '';
+  modal.classList.add('show');
+  setTimeout(()=>input.focus(), 150);
+}
+
+function submitWinner(){
+  const input = document.getElementById('nameInput');
+  const name  = input.value.trim();
+  document.getElementById('nameModal').classList.remove('show');
+  _fireCongrats(name || null);
+}
+
+function cancelName(){
+  document.getElementById('nameModal').classList.remove('show');
+  _fireCongrats(null);
+}
+
+// Attach Enter/Escape to name input directly (DOM already ready at script execution)
+document.getElementById('nameInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') submitWinner();
+  if(e.key==='Escape') cancelName();
+});
+
+function _fireCongrats(name){
+  // Register winner
+  const winnerNum = winners.length + 1;
+  winners.push({ name: name || '???', number: called.length, rank: winnerNum });
+  updateWinnersBtn();
+
+  // Show congrats overlay
+  const ov    = document.getElementById('congratsOverlay');
+  const word  = ov.querySelector('.congrats-word');
+  const wname = document.getElementById('congratsWinnerName');
+  const sub   = ov.querySelector('.congrats-sub');
+  const btn   = ov.querySelector('.congrats-close-btn');
+
+  wname.textContent = name ? `🎊 ${name} 🎊` : '';
+  [word, wname, sub, btn].forEach(el=>{ el.style.animation='none'; void el.offsetWidth; el.style.animation=''; });
   ov.classList.add('show');
+
   confetti('#FFD700',120); confetti('#FF3D9A',80);
   confetti('#00B4FF',80);  confetti('#9B59FF',60);
   playFinale();
 }
+
 function hideCongrats(){
   document.getElementById('congratsOverlay').classList.remove('show');
+}
+
+function updateWinnersBtn(){
+  const btn = document.getElementById('winnersBtn');
+  document.getElementById('winnerCount').textContent = winners.length;
+  btn.classList.toggle('has-winners', winners.length > 0);
+}
+
+function openWinners(){
+  renderWinnersList();
+  document.getElementById('winnersModal').classList.add('show');
+}
+
+function renderWinnersList(){
+  const list = document.getElementById('winnersList');
+  list.innerHTML = '';
+  if(winners.length === 0){
+    list.innerHTML = '<div class="winners-empty">No winners yet!</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  winners.forEach((w,i)=>{
+    const row = document.createElement('div');
+    row.className = 'winner-row';
+    row.innerHTML = `
+      <div class="winner-rank">${medals[i] || `#${i+1}`}</div>
+      <div class="winner-name editable-name" data-idx="${i}" title="Tap to edit">${w.name}</div>
+      <div class="winner-num">after ${w.number} balls</div>
+    `;
+    list.appendChild(row);
+  });
+
+  // Tap to edit
+  list.querySelectorAll('.editable-name').forEach(el=>{
+    el.addEventListener('click', ()=> startEditName(el));
+  });
+}
+
+function startEditName(el){
+  if(el.querySelector('input')) return; // already editing
+  const idx  = parseInt(el.dataset.idx);
+  const current = winners[idx].name;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current === '???' ? '' : current;
+  input.maxLength = 20;
+  input.className = 'inline-name-input';
+  input.placeholder = 'Enter name…';
+
+  el.textContent = '';
+  el.appendChild(input);
+  el.classList.add('editing');
+  input.focus();
+  input.select();
+
+  function commit(){
+    const val = input.value.trim();
+    winners[idx].name = val || '???';
+    renderWinnersList();
+    // Also update congrats if same person is showing
+    const wname = document.getElementById('congratsWinnerName');
+    if(wname && wname.textContent.includes(current)){
+      wname.textContent = val ? `🎊 ${val} 🎊` : '';
+    }
+  }
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e=>{
+    if(e.key==='Enter')  { e.preventDefault(); input.blur(); }
+    if(e.key==='Escape') { input.value = current; input.blur(); }
+  });
+}
+
+function closeWinners(){
+  document.getElementById('winnersModal').classList.remove('show');
 }
 
 function confirmReset(){
