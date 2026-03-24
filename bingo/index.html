@@ -771,6 +771,7 @@
     <div class="name-box-btns">
       <button class="modal-yes" onclick="submitWinner()">🏆 Register!</button>
       <button class="modal-no"  onclick="cancelName()">Skip</button>
+      <button class="modal-no"  onclick="closeNameModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -1242,10 +1243,15 @@ function cancelName(){
   _fireCongrats(null);
 }
 
+function closeNameModal(){
+  // Cancel entirely — no winner registered, no congrats
+  document.getElementById('nameModal').classList.remove('show');
+}
+
 // Attach Enter/Escape to name input directly (DOM already ready at script execution)
 document.getElementById('nameInput').addEventListener('keydown', e=>{
   if(e.key==='Enter') submitWinner();
-  if(e.key==='Escape') cancelName();
+  if(e.key==='Escape') closeNameModal();
 });
 
 function _fireCongrats(name){
