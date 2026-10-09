@@ -12,6 +12,7 @@
 | 🎈 壁面飾りメーカー | [deco/](deco/) | パーティー | 好きなメッセージ文を1文字ずつデコって印刷する。 |
 | 🚗 ぶんぶんドライブ | [bunbun-drive/](bunbun-drive/) | ゲーム | タップや ← → キーで車線を変えて、障害物をよけながら走るドライブゲーム。 |
 | 🏃 モチまるダッシュ | [mochimaru-dash/](mochimaru-dash/) | ゲーム | モチまるがジャンプで障害物を飛び越えて走るアクションゲーム。長押しで高くジャンプ。 |
+| 💃 Dance Choreographer | [dance/](dance/) | ビジュアル | 肩・肘・股関節・膝の角度を拍ごとに設定して、棒人間のダンスを振り付け。GIFで書き出せる。 |
 
 ## 使い方
 
@@ -32,7 +33,8 @@ open bingo/index.html
 ├── bingocard/index.html
 ├── deco/index.html
 ├── bunbun-drive/index.html
-└── mochimaru-dash/index.html
+├── mochimaru-dash/index.html
+└── dance/index.html
 ```
 
 ## ツールの追加方法

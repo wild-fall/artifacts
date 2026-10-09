@@ -22,84 +22,84 @@ const { useState, useRef, useEffect, useCallback } = React;
 
 // ── Joint definitions ──────────────────────────────────────────
 const JOINTS = [{
-id: “lShoulder”,
-label: “左肩”,
-color: “#ff7b7b”
+id: "lShoulder",
+label: "左肩",
+color: "#ff7b7b"
 }, {
-id: “rShoulder”,
-label: “右肩”,
-color: “#ff9b9b”
+id: "rShoulder",
+label: "右肩",
+color: "#ff9b9b"
 }, {
-id: “lElbow”,
-label: “左肘”,
-color: “#ffb347”
+id: "lElbow",
+label: "左肘",
+color: "#ffb347"
 }, {
-id: “rElbow”,
-label: “右肘”,
-color: “#ffc870”
+id: "rElbow",
+label: "右肘",
+color: "#ffc870"
 }, {
-id: “lHip”,
-label: “左股関節”,
-color: “#6ee87a”
+id: "lHip",
+label: "左股関節",
+color: "#6ee87a"
 }, {
-id: “rHip”,
-label: “右股関節”,
-color: “#98f0a0”
+id: "rHip",
+label: "右股関節",
+color: "#98f0a0"
 }, {
-id: “lKnee”,
-label: “左膝”,
-color: “#74aaff”
+id: "lKnee",
+label: "左膝",
+color: "#74aaff"
 }, {
-id: “rKnee”,
-label: “右膝”,
-color: “#99c2ff”
+id: "rKnee",
+label: "右膝",
+color: "#99c2ff"
 }];
 
 // ── Face direction ─────────────────────────────────────────────
-const FACE_CYCLE = [“front”, “up”, “down”, “left”, “right”];
+const FACE_CYCLE = ["front", "up", "down", "left", "right"];
 const FACE_ICON = {
-front: “●”,
-up: “↑”,
-down: “↓”,
-left: “←”,
-right: “→”
+front: "●",
+up: "↑",
+down: "↓",
+left: "←",
+right: "→"
 };
 const FACE_LABEL = {
-front: “正面”,
-up: “上”,
-down: “下”,
-left: “左”,
-right: “右”
+front: "正面",
+up: "上",
+down: "下",
+left: "左",
+right: "右"
 };
 const ZERO = {
-…Object.fromEntries(JOINTS.map(j => [j.id, 0])),
-face: “front”
+...Object.fromEntries(JOINTS.map(j => [j.id, 0])),
+face: "front"
 };
 function lerp(a, b, t) {
 return a + (b - a) * t;
 }
 function blendBeats(b1, b2, t) {
 const out = Object.fromEntries(JOINTS.map(j => [j.id, lerp(b1[j.id] ?? 0, b2[j.id] ?? 0, t)]));
-out.face = b1.face ?? “front”; // snap — no interpolation for face direction
+out.face = b1.face ?? "front"; // snap — no interpolation for face direction
 return out;
 }
 
 // ── Face drawing ───────────────────────────────────────────────
 function drawFace(ctx, hcx, hcy, HR, dir) {
 ctx.save();
-ctx.shadowColor = “#00ffaa”;
+ctx.shadowColor = "#00ffaa";
 ctx.shadowBlur = 5;
-ctx.strokeStyle = “#00ffaa”;
-ctx.fillStyle = “#00ffaa”;
+ctx.strokeStyle = "#00ffaa";
+ctx.fillStyle = "#00ffaa";
 ctx.lineWidth = 1.8;
-ctx.lineCap = “round”;
+ctx.lineCap = "round";
 const eye = (dx, dy) => {
 ctx.beginPath();
 ctx.arc(hcx + dx, hcy + dy, 2.4, 0, Math.PI * 2);
 ctx.fill();
 };
 switch (dir) {
-case “front”:
+case "front":
 eye(-6.5, -5);
 eye(+6.5, -5);
 ctx.beginPath();
@@ -109,7 +109,7 @@ ctx.beginPath();
 ctx.arc(hcx, hcy + 2, 6, 0.18 * Math.PI, 0.82 * Math.PI);
 ctx.stroke(); // smile
 break;
-case “up”:
+case "up":
 eye(-5.5, -12);
 eye(+5.5, -12);
 ctx.beginPath();
@@ -120,7 +120,7 @@ ctx.beginPath();
 ctx.arc(hcx, hcy - 2, 4, 0.15 * Math.PI, 0.85 * Math.PI);
 ctx.stroke(); // mouth
 break;
-case “down”:
+case "down":
 eye(-5.5, +7);
 eye(+5.5, +7);
 ctx.beginPath();
@@ -128,7 +128,7 @@ ctx.moveTo(hcx, hcy - HR + 4);
 ctx.lineTo(hcx, hcy + 2);
 ctx.stroke(); // nose bridge
 break;
-case “left”:
+case "left":
 {
 eye(-9, -5);
 const nx = hcx - HR + 2;
@@ -145,7 +145,7 @@ ctx.arc(hcx + HR - 1, hcy, 3, -0.4 * Math.PI, 0.4 * Math.PI);
 ctx.stroke(); // ear
 break;
 }
-case “right”:
+case "right":
 {
 eye(+9, -5);
 const nx = hcx + HR - 2;
@@ -168,11 +168,11 @@ ctx.restore();
 
 // ── Canvas figure renderer ─────────────────────────────────────
 function paintFigure(canvas, ang) {
-const ctx = canvas.getContext(“2d”);
+const ctx = canvas.getContext("2d");
 const W = canvas.width,
 H = canvas.height;
 ctx.clearRect(0, 0, W, H);
-ctx.fillStyle = “rgba(0,210,130,0.09)”;
+ctx.fillStyle = "rgba(0,210,130,0.09)";
 for (let x = 0; x < W; x += 22) for (let y = 0; y < H; y += 22) ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
 const cx = W / 2,
 cy = H * 0.43;
@@ -194,12 +194,12 @@ const lHpx = cx - HW,
 rHpx = cx + HW;
 const hcx = cx,
 hcy = sy - NK - HR;
-ctx.lineCap = “round”;
-ctx.lineJoin = “round”;
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
 function seg(x1, y1, x2, y2) {
-ctx.shadowColor = “#00ffaa”;
+ctx.shadowColor = "#00ffaa";
 ctx.shadowBlur = 9;
-ctx.strokeStyle = “#00ffaa”;
+ctx.strokeStyle = "#00ffaa";
 ctx.lineWidth = 3;
 ctx.beginPath();
 ctx.moveTo(x1, y1);
@@ -207,9 +207,9 @@ ctx.lineTo(x2, y2);
 ctx.stroke();
 }
 function jdot(x, y) {
-ctx.shadowColor = “#ff6040”;
+ctx.shadowColor = "#ff6040";
 ctx.shadowBlur = 14;
-ctx.fillStyle = “#ff6040”;
+ctx.fillStyle = "#ff6040";
 ctx.beginPath();
 ctx.arc(x, y, 5, 0, Math.PI * 2);
 ctx.fill();
@@ -217,25 +217,25 @@ ctx.shadowBlur = 0;
 }
 
 // Head circle
-ctx.shadowColor = “#00ffaa”;
+ctx.shadowColor = "#00ffaa";
 ctx.shadowBlur = 9;
-ctx.strokeStyle = “#00ffaa”;
+ctx.strokeStyle = "#00ffaa";
 ctx.lineWidth = 3;
 ctx.beginPath();
 ctx.arc(hcx, hcy, HR, 0, Math.PI * 2);
 ctx.stroke();
 
 // Face
-drawFace(ctx, hcx, hcy, HR, ang.face ?? “front”);
+drawFace(ctx, hcx, hcy, HR, ang.face ?? "front");
 
 // Neck
 seg(cx, hcy + HR, cx, sy);
 
 // Torso trapezoid
-ctx.shadowColor = “#00ffaa”;
+ctx.shadowColor = "#00ffaa";
 ctx.shadowBlur = 6;
-ctx.fillStyle = “rgba(0,255,170,0.07)”;
-ctx.strokeStyle = “#00ffaa”;
+ctx.fillStyle = "rgba(0,255,170,0.07)";
+ctx.strokeStyle = "#00ffaa";
 ctx.lineWidth = 3;
 ctx.beginPath();
 ctx.moveTo(lShx, sy);
@@ -292,7 +292,7 @@ ctx.shadowBlur = 0;
 }
 
 // ── Preset dances ──────────────────────────────────────────────
-const mk = (ls, rs, le, re, lh, rh, lk, rk, face = “front”) => ({
+const mk = (ls, rs, le, re, lh, rh, lk, rk, face = "front") => ({
 lShoulder: ls,
 rShoulder: rs,
 lElbow: le,
@@ -304,12 +304,12 @@ rKnee: rk,
 face
 });
 const PRESETS = {
-“idle”: [mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0)],
-“wave 🤚”: [mk(-20, 65, 0, -45, 0, 0, 0, 0, “front”), mk(-20, 80, 0, -65, 0, 0, 0, 0, “right”), mk(-20, 65, 0, -45, 0, 0, 0, 0, “front”), mk(-20, 80, 0, -65, 0, 0, 0, 0, “right”)],
-“JJ 🤸”: [mk(0, 0, 0, 0, 8, 8, 0, 0, “front”), mk(72, 72, -15, -15, 32, 32, 0, 0, “up”), mk(0, 0, 0, 0, 8, 8, 0, 0, “front”), mk(72, 72, -15, -15, 32, 32, 0, 0, “up”)],
-“march 🚶”: [mk(30, -30, -15, 15, -28, 28, 0, -50, “left”), mk(5, 5, 0, 0, 0, 0, 0, 0, “front”), mk(-30, 30, 15, -15, 28, -28, -50, 0, “right”), mk(5, 5, 0, 0, 0, 0, 0, 0, “front”)],
-“robot 🤖”: [mk(90, 0, 90, 0, 0, 0, 0, 0, “left”), mk(90, 90, 90, -90, 0, 0, 0, 0, “front”), mk(0, 90, 0, -90, 0, 0, 0, 0, “right”), mk(0, 0, 0, 0, 0, 0, 0, 0, “front”)],
-“disco 🕺”: [mk(60, -20, 90, 30, -20, 10, 0, 0, “left”), mk(-20, 60, -30, 90, 10, -20, 0, 0, “front”), mk(60, -20, 90, 30, -20, 10, 0, 45, “left”), mk(-20, 60, -30, 90, 10, -20, 45, 0, “right”)]
+"idle": [mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0), mk(0, 0, 0, 0, 0, 0, 0, 0)],
+"wave 🤚": [mk(-20, 65, 0, -45, 0, 0, 0, 0, "front"), mk(-20, 80, 0, -65, 0, 0, 0, 0, "right"), mk(-20, 65, 0, -45, 0, 0, 0, 0, "front"), mk(-20, 80, 0, -65, 0, 0, 0, 0, "right")],
+"JJ 🤸": [mk(0, 0, 0, 0, 8, 8, 0, 0, "front"), mk(72, 72, -15, -15, 32, 32, 0, 0, "up"), mk(0, 0, 0, 0, 8, 8, 0, 0, "front"), mk(72, 72, -15, -15, 32, 32, 0, 0, "up")],
+"march 🚶": [mk(30, -30, -15, 15, -28, 28, 0, -50, "left"), mk(5, 5, 0, 0, 0, 0, 0, 0, "front"), mk(-30, 30, 15, -15, 28, -28, -50, 0, "right"), mk(5, 5, 0, 0, 0, 0, 0, 0, "front")],
+"robot 🤖": [mk(90, 0, 90, 0, 0, 0, 0, 0, "left"), mk(90, 90, 90, -90, 0, 0, 0, 0, "front"), mk(0, 90, 0, -90, 0, 0, 0, 0, "right"), mk(0, 0, 0, 0, 0, 0, 0, 0, "front")],
+"disco 🕺": [mk(60, -20, 90, 30, -20, 10, 0, 0, "left"), mk(-20, 60, -30, 90, 10, -20, 0, 0, "front"), mk(60, -20, 90, 30, -20, 10, 0, 45, "left"), mk(-20, 60, -30, 90, 10, -20, 45, 0, "right")]
 };
 
 // ── Main App ───────────────────────────────────────────────────
@@ -325,7 +325,7 @@ playing: false
 const [beats, setBeats] = useState(Array.from({
 length: 8
 }, () => ({
-…ZERO
+...ZERO
 })));
 const [tempo, setTempo] = useState(120);
 const [playing, setPlaying] = useState(false);
@@ -334,7 +334,7 @@ const [sel, setSel] = useState({
 bi: 0,
 ji: 0
 });
-const [gifState, setGifState] = useState(“idle”); // idle | loading | encoding | done
+const [gifState, setGifState] = useState("idle"); // idle | loading | encoding | done
 const [gifProgress, setGifProgress] = useState(0);
 liveRef.current = {
 beats,
@@ -378,9 +378,9 @@ setActiveBeat(-1);
 const setAngle = (bi, jid, raw) => {
 const v = Math.max(-180, Math.min(180, Math.round(Number(raw) || 0)));
 setBeats(prev => {
-const n = […prev];
+const n = [...prev];
 n[bi] = {
-…n[bi],
+...n[bi],
 [jid]: v
 };
 return n;
@@ -388,39 +388,39 @@ return n;
 };
 const setFace = (bi, dir) => {
 setBeats(prev => {
-const n = […prev];
+const n = [...prev];
 n[bi] = {
-…n[bi],
+...n[bi],
 face: dir
 };
 return n;
 });
 };
 const cycleFace = bi => {
-const cur = beats[bi]?.face ?? “front”;
+const cur = beats[bi]?.face ?? "front";
 const nxt = FACE_CYCLE[(FACE_CYCLE.indexOf(cur) + 1) % FACE_CYCLE.length];
 setFace(bi, nxt);
 setSel(s => ({
-…s,
+...s,
 bi
 }));
 };
-const addBeat = () => setBeats(p => […p, {
-…(p[p.length - 1] ?? ZERO)
+const addBeat = () => setBeats(p => [...p, {
+...(p[p.length - 1] ?? ZERO)
 }]);
 const removeBeat = idx => {
 if (beats.length <= 2) return;
 setBeats(p => p.filter((_, i) => i !== idx));
 setSel(s => ({
-…s,
+...s,
 bi: Math.min(s.bi, beats.length - 2)
 }));
 };
 const loadPreset = preset => {
 stop();
 setBeats(preset.map(b => ({
-…ZERO,
-…b
+...ZERO,
+...b
 })));
 setSel({
 bi: 0,
@@ -434,21 +434,21 @@ if (window.gifshot) {
 res();
 return;
 }
-const s = document.createElement(‘script’);
-s.src = ‘https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.4.5/gifshot.min.js’;
+const s = document.createElement('script');
+s.src = 'https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.4.5/gifshot.min.js';
 s.onload = res;
 s.onerror = rej;
 document.head.appendChild(s);
 });
 const downloadGif = async () => {
-if (gifState === ‘encoding’ || gifState === ‘loading’) return;
-setGifState(‘loading’);
+if (gifState === 'encoding' || gifState === 'loading') return;
+setGifState('loading');
 setGifProgress(0);
 try {
 await loadGifShot();
 } catch (e) {
-setGifState(‘idle’);
-alert(‘gifshot の読み込みに失敗しました’);
+setGifState('idle');
+alert('gifshot の読み込みに失敗しました');
 return;
 }
 const FPB = 12; // frames per beat
@@ -500,170 +500,170 @@ window.gifshot.createGIF({
 };
 const selJ = JOINTS[sel.ji];
 const selVal = beats[sel.bi]?.[selJ.id] ?? 0;
-const selFace = beats[sel.bi]?.face ?? “front”;
+const selFace = beats[sel.bi]?.face ?? "front";
 const C = {
-bg: “#07090e”,
-panel: “#0c1119”,
-border: “#182030”,
-acc: “#00ffaa”,
-text: “#b0cce0”,
-dim: “#354860”
+bg: "#07090e",
+panel: "#0c1119",
+border: "#182030",
+acc: "#00ffaa",
+text: "#b0cce0",
+dim: "#354860"
 };
-const FC = “#c8aaff”; // face color
+const FC = "#c8aaff"; // face color
 
-return /*#**PURE***/React.createElement(“div”, {
+return /*#**PURE***/React.createElement("div", {
 style: {
-height: “100vh”,
-display: “flex”,
-flexDirection: “column”,
+height: "100vh",
+display: "flex",
+flexDirection: "column",
 background: C.bg,
 color: C.text,
-fontFamily: “‘Courier New’,Courier,monospace”,
-overflow: “hidden”,
+fontFamily: "'Courier New',Courier,monospace",
+overflow: "hidden",
 fontSize: 13
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-padding: “7px 14px”,
+padding: "7px 14px",
 background: C.panel,
 borderBottom: `1px solid ${C.border}`,
-display: “flex”,
-alignItems: “center”,
+display: "flex",
+alignItems: "center",
 gap: 10,
-flexWrap: “wrap”
+flexWrap: "wrap"
 }
-}, /*#**PURE***/React.createElement(“span”, {
+}, /*#**PURE***/React.createElement("span", {
 style: {
 color: C.acc,
-fontWeight: “bold”,
+fontWeight: "bold",
 letterSpacing: 3,
 fontSize: 13
 }
-}, “\u25C8 DANCE CHOREOGRAPHER”), /*#**PURE***/React.createElement(“span”, {
+}, "\u25C8 DANCE CHOREOGRAPHER"), /*#**PURE***/React.createElement("span", {
 style: {
 color: C.dim,
 fontSize: 10
 }
-}, “PRESET:”), Object.entries(PRESETS).map(([k, v]) => /*#**PURE***/React.createElement(“button”, {
+}, "PRESET:"), Object.entries(PRESETS).map(([k, v]) => /*#**PURE***/React.createElement("button", {
 key: k,
 onClick: () => loadPreset(v),
 style: {
-background: “none”,
+background: "none",
 border: `1px solid ${C.border}`,
 color: C.text,
-padding: “2px 9px”,
+padding: "2px 9px",
 borderRadius: 3,
-cursor: “pointer”,
-fontFamily: “inherit”,
+cursor: "pointer",
+fontFamily: "inherit",
 fontSize: 11
 }
-}, k))), /*#**PURE***/React.createElement(“div”, {
+}, k))), /*#**PURE***/React.createElement("div", {
 style: {
 flex: 1,
-display: “flex”,
-overflow: “hidden”
+display: "flex",
+overflow: "hidden"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
 width: 252,
 flexShrink: 0,
-background: “#040710”,
+background: "#040710",
 borderRight: `1px solid ${C.border}`,
-display: “flex”,
-flexDirection: “column”,
-alignItems: “center”,
-justifyContent: “center”,
+display: "flex",
+flexDirection: "column",
+alignItems: "center",
+justifyContent: "center",
 gap: 8,
 padding: 10
 }
-}, /*#**PURE***/React.createElement(“canvas”, {
+}, /*#**PURE***/React.createElement("canvas", {
 ref: canvasRef,
 width: 232,
 height: 316,
 style: {
 borderRadius: 6,
 border: `1px solid ${C.border}`,
-display: “block”
+display: "block"
 }
-}), /*#**PURE***/React.createElement(“div”, {
+}), /*#**PURE***/React.createElement("div", {
 style: {
 fontSize: 10,
 color: C.dim,
 letterSpacing: 2
 }
-}, playing ? `♪  BEAT ${activeBeat + 1} / ${beats.length}` : `●  EDIT — ${sel.bi + 1}拍目`)), /*#**PURE***/React.createElement(“div”, {
+}, playing ? `♪  BEAT ${activeBeat + 1} / ${beats.length}` : `●  EDIT — ${sel.bi + 1}拍目`)), /*#**PURE***/React.createElement("div", {
 style: {
 flex: 1,
-overflowX: “auto”,
-overflowY: “auto”,
-padding: “10px 12px”
+overflowX: "auto",
+overflowY: "auto",
+padding: "10px 12px"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-display: “inline-flex”,
-flexDirection: “column”,
+display: "inline-flex",
+flexDirection: "column",
 gap: 3
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
+display: "flex",
 gap: 3,
 paddingLeft: 90
 }
-}, beats.map((_, bi) => /*#**PURE***/React.createElement(“div”, {
+}, beats.map((_, bi) => /*#**PURE***/React.createElement("div", {
 key: bi,
 style: {
 width: 54,
 flexShrink: 0,
-textAlign: “center”,
+textAlign: "center",
 fontSize: 11,
-color: bi === activeBeat ? C.acc : bi === sel.bi ? “#88aacc” : C.dim,
-fontWeight: bi === activeBeat ? “bold” : “normal”
+color: bi === activeBeat ? C.acc : bi === sel.bi ? "#88aacc" : C.dim,
+fontWeight: bi === activeBeat ? "bold" : "normal"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-cursor: “pointer”
+cursor: "pointer"
 },
 onClick: () => setSel(s => ({
-…s,
+...s,
 bi
 }))
-}, bi + 1, “\u62CD”), beats.length > 2 && /*#**PURE***/React.createElement(“button”, {
+}, bi + 1, "\u62CD"), beats.length > 2 && /*#**PURE***/React.createElement("button", {
 onClick: () => removeBeat(bi),
 style: {
-background: “none”,
-border: “none”,
-color: “#ff5555”,
-cursor: “pointer”,
+background: "none",
+border: "none",
+color: "#ff5555",
+cursor: "pointer",
 fontSize: 9,
 padding: 0,
-display: “block”,
-margin: “0 auto”
+display: "block",
+margin: "0 auto"
 }
-}, “\xD7”))), /*#**PURE***/React.createElement(“button”, {
+}, "\xD7"))), /*#**PURE***/React.createElement("button", {
 onClick: addBeat,
 style: {
 width: 36,
 height: 38,
-background: “none”,
+background: "none",
 border: `1px dashed ${C.dim}`,
 color: C.acc,
-cursor: “pointer”,
+cursor: "pointer",
 fontSize: 20,
 borderRadius: 4,
 flexShrink: 0,
-display: “flex”,
-alignItems: “center”,
-justifyContent: “center”,
+display: "flex",
+alignItems: "center",
+justifyContent: "center",
 lineHeight: 1
 }
-}, “+”)), /*#**PURE***/React.createElement(“div”, {
+}, "+")), /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
+display: "flex",
 gap: 3,
-alignItems: “center”
+alignItems: "center"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
 width: 87,
 flexShrink: 0,
@@ -671,13 +671,13 @@ fontSize: 11,
 paddingLeft: 4,
 color: FC,
 borderLeft: `2px solid ${FC}`,
-userSelect: “none”
+userSelect: "none"
 }
-}, “\u5411\u304D”), beats.map((beat, bi) => {
-const dir = beat.face ?? “front”;
+}, "\u5411\u304D"), beats.map((beat, bi) => {
+const dir = beat.face ?? "front";
 const isAct = bi === activeBeat,
 isSel = bi === sel.bi;
-return /*#**PURE***/React.createElement(“div”, {
+return /*#**PURE***/React.createElement("div", {
 key: bi,
 onClick: () => cycleFace(bi),
 title: `クリックで切替: ${FACE_LABEL[dir]}`,
@@ -685,57 +685,57 @@ style: {
 width: 54,
 height: 30,
 flexShrink: 0,
-display: “flex”,
-flexDirection: “column”,
-alignItems: “center”,
-justifyContent: “center”,
+display: "flex",
+flexDirection: "column",
+alignItems: "center",
+justifyContent: "center",
 background: isSel ? `${FC}18` : isAct ? `${FC}08` : C.panel,
 border: `1px solid ${isSel ? FC : isAct ? FC + "44" : C.border}`,
 borderRadius: 4,
-cursor: “pointer”,
-userSelect: “none”,
+cursor: "pointer",
+userSelect: "none",
 lineHeight: 1
 }
-}, /*#**PURE***/React.createElement(“span”, {
+}, /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 15,
 color: FC
 }
-}, FACE_ICON[dir]), /*#**PURE***/React.createElement(“span”, {
+}, FACE_ICON[dir]), /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 8,
 color: `${FC}99`,
 marginTop: 1
 }
 }, FACE_LABEL[dir]));
-})), JOINTS.map((joint, ji) => /*#**PURE***/React.createElement(“div”, {
+})), JOINTS.map((joint, ji) => /*#**PURE***/React.createElement("div", {
 key: joint.id,
 style: {
-display: “flex”,
+display: "flex",
 gap: 3,
-alignItems: “center”
+alignItems: "center"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
 width: 87,
 flexShrink: 0,
 fontSize: 11,
 paddingRight: 4,
 paddingLeft: 4,
-cursor: “pointer”,
-userSelect: “none”,
+cursor: "pointer",
+userSelect: "none",
 color: sel.ji === ji ? joint.color : C.text,
 borderLeft: `2px solid ${sel.ji === ji ? joint.color : "transparent"}`
 },
 onClick: () => setSel(s => ({
-…s,
+...s,
 ji
 }))
 }, joint.label), beats.map((beat, bi) => {
 const v = beat[joint.id] ?? 0;
 const isSel = sel.bi === bi && sel.ji === ji,
 isAct = bi === activeBeat;
-return /*#**PURE***/React.createElement(“div”, {
+return /*#**PURE***/React.createElement("div", {
 key: bi,
 onClick: () => setSel({
 bi,
@@ -745,62 +745,62 @@ style: {
 width: 54,
 height: 30,
 flexShrink: 0,
-display: “flex”,
-alignItems: “center”,
-justifyContent: “center”,
-background: isSel ? `${joint.color}18` : isAct ? “#00ffaa08” : C.panel,
+display: "flex",
+alignItems: "center",
+justifyContent: "center",
+background: isSel ? `${joint.color}18` : isAct ? "#00ffaa08" : C.panel,
 border: `1px solid ${isSel ? joint.color : isAct ? "#00ffaa28" : C.border}`,
 borderRadius: 4,
-cursor: “pointer”,
+cursor: "pointer",
 fontSize: 12,
 color: v !== 0 ? isSel ? joint.color : C.text : C.dim,
-userSelect: “none”,
-transition: “background 0.07s,border-color 0.07s”
+userSelect: "none",
+transition: "background 0.07s,border-color 0.07s"
 }
-}, v > 0 ? `+${v}` : v, “\xB0”);
-})))))), /*#**PURE***/React.createElement(“div”, {
+}, v > 0 ? `+${v}` : v, "\xB0");
+})))))), /*#**PURE***/React.createElement("div", {
 style: {
 background: C.panel,
 borderTop: `1px solid ${C.border}`,
-padding: “10px 14px”,
-display: “flex”,
-flexDirection: “column”,
+padding: "10px 14px",
+display: "flex",
+flexDirection: "column",
 gap: 10
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
-alignItems: “center”,
+display: "flex",
+alignItems: "center",
 gap: 20,
-flexWrap: “wrap”
+flexWrap: "wrap"
 }
-}, /*#**PURE***/React.createElement(“button”, {
+}, /*#**PURE***/React.createElement("button", {
 onClick: playing ? stop : play,
 style: {
-padding: “7px 26px”,
-background: playing ? “rgba(255,50,50,0.12)” : “rgba(0,255,170,0.12)”,
+padding: "7px 26px",
+background: playing ? "rgba(255,50,50,0.12)" : "rgba(0,255,170,0.12)",
 border: `1px solid ${playing ? "#ff3333" : C.acc}`,
-color: playing ? “#ff3333” : C.acc,
-cursor: “pointer”,
+color: playing ? "#ff3333" : C.acc,
+cursor: "pointer",
 borderRadius: 4,
-fontFamily: “inherit”,
+fontFamily: "inherit",
 fontSize: 13,
-fontWeight: “bold”,
+fontWeight: "bold",
 letterSpacing: 2
 }
-}, playing ? “■  STOP” : “▶  PLAY”), /*#**PURE***/React.createElement(“div”, {
+}, playing ? "■  STOP" : "▶  PLAY"), /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
-alignItems: “center”,
+display: "flex",
+alignItems: "center",
 gap: 8
 }
-}, /*#**PURE***/React.createElement(“span”, {
+}, /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 11,
 color: C.dim
 }
-}, “TEMPO”), /*#**PURE***/React.createElement(“input”, {
-type: “range”,
+}, "TEMPO"), /*#**PURE***/React.createElement("input", {
+type: "range",
 min: 40,
 max: 240,
 value: tempo,
@@ -809,97 +809,97 @@ style: {
 width: 130,
 accentColor: C.acc
 }
-}), /*#**PURE***/React.createElement(“span”, {
+}), /*#**PURE***/React.createElement("span", {
 style: {
 color: C.acc,
-fontWeight: “bold”,
+fontWeight: "bold",
 minWidth: 68
 }
-}, tempo, “ BPM”)), /*#**PURE***/React.createElement(“span”, {
+}, tempo, " BPM")), /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 11,
 color: C.dim
 }
-}, beats.length, “ \u62CD\u30EB\u30FC\u30D7”), /*#**PURE***/React.createElement(“button”, {
+}, beats.length, " \u62CD\u30EB\u30FC\u30D7"), /*#**PURE***/React.createElement("button", {
 onClick: downloadGif,
-disabled: gifState === ‘encoding’ || gifState === ‘loading’,
+disabled: gifState === 'encoding' || gifState === 'loading',
 style: {
-padding: “7px 18px”,
+padding: "7px 18px",
 marginLeft: 4,
-background: gifState === ‘done’ ? “rgba(0,180,255,0.12)” : gifState === ‘idle’ ? “rgba(180,130,255,0.10)” : “rgba(180,130,255,0.06)”,
+background: gifState === 'done' ? "rgba(0,180,255,0.12)" : gifState === 'idle' ? "rgba(180,130,255,0.10)" : "rgba(180,130,255,0.06)",
 border: `1px solid ${gifState === 'done' ? "#00b4ff" : gifState === 'encoding' || gifState === 'loading' ? "#9966ff88" : "#9966ff"}`,
-color: gifState === ‘done’ ? “#00b4ff” : gifState === ‘encoding’ || gifState === ‘loading’ ? “#9966ff88” : “#c8aaff”,
-cursor: gifState === ‘encoding’ || gifState === ‘loading’ ? “not-allowed” : “pointer”,
+color: gifState === 'done' ? "#00b4ff" : gifState === 'encoding' || gifState === 'loading' ? "#9966ff88" : "#c8aaff",
+cursor: gifState === 'encoding' || gifState === 'loading' ? "not-allowed" : "pointer",
 borderRadius: 4,
-fontFamily: “inherit”,
+fontFamily: "inherit",
 fontSize: 12,
-fontWeight: “bold”,
+fontWeight: "bold",
 letterSpacing: 1,
 minWidth: 110,
-position: “relative”,
-overflow: “hidden”,
-transition: “all 0.2s”
+position: "relative",
+overflow: "hidden",
+transition: "all 0.2s"
 }
-}, (gifState === ‘loading’ || gifState === ‘encoding’) && /*#**PURE***/React.createElement(“div”, {
+}, (gifState === 'loading' || gifState === 'encoding') && /*#**PURE***/React.createElement("div", {
 style: {
-position: “absolute”,
+position: "absolute",
 left: 0,
 top: 0,
-height: “100%”,
+height: "100%",
 width: `${gifProgress}%`,
-background: “rgba(153,102,255,0.18)”,
-transition: “width 0.15s”,
-pointerEvents: “none”
+background: "rgba(153,102,255,0.18)",
+transition: "width 0.15s",
+pointerEvents: "none"
 }
-}), /*#**PURE***/React.createElement(“span”, {
+}), /*#**PURE***/React.createElement("span", {
 style: {
-position: “relative”
+position: "relative"
 }
-}, gifState === ‘idle’ && “⬇ GIF 書き出し”, gifState === ‘loading’ && `読込中… ${gifProgress}%`, gifState === ‘encoding’ && `生成中… ${gifProgress}%`, gifState === ‘done’ && “✓ ダウンロード完了”))), /*#**PURE***/React.createElement(“div”, {
+}, gifState === 'idle' && "⬇ GIF 書き出し", gifState === 'loading' && `読込中... ${gifProgress}%`, gifState === 'encoding' && `生成中... ${gifProgress}%`, gifState === 'done' && "✓ ダウンロード完了"))), /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
-alignItems: “center”,
+display: "flex",
+alignItems: "center",
 gap: 12,
-flexWrap: “wrap”
+flexWrap: "wrap"
 }
-}, /*#**PURE***/React.createElement(“div”, {
+}, /*#**PURE***/React.createElement("div", {
 style: {
-display: “flex”,
-alignItems: “center”,
+display: "flex",
+alignItems: "center",
 gap: 5
 }
-}, /*#**PURE***/React.createElement(“span”, {
+}, /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 10,
 color: C.dim,
 marginRight: 2
 }
-}, sel.bi + 1, “\u62CD:”), FACE_CYCLE.map(dir => /*#**PURE***/React.createElement(“button”, {
+}, sel.bi + 1, "\u62CD:"), FACE_CYCLE.map(dir => /*#**PURE***/React.createElement("button", {
 key: dir,
 onClick: () => setFace(sel.bi, dir),
 title: FACE_LABEL[dir],
 style: {
 width: 30,
 height: 26,
-background: “none”,
+background: "none",
 border: `1px solid ${selFace === dir ? FC : C.border}`,
 color: selFace === dir ? FC : C.dim,
-cursor: “pointer”,
+cursor: "pointer",
 borderRadius: 3,
-fontFamily: “inherit”,
+fontFamily: "inherit",
 fontSize: 14,
-display: “flex”,
-alignItems: “center”,
-justifyContent: “center”
+display: "flex",
+alignItems: "center",
+justifyContent: "center"
 }
-}, FACE_ICON[dir]))), /*#**PURE***/React.createElement(“div”, {
+}, FACE_ICON[dir]))), /*#**PURE***/React.createElement("div", {
 style: {
 width: 1,
 height: 22,
 background: C.border,
 flexShrink: 0
 }
-}), /*#**PURE***/React.createElement(“span”, {
+}), /*#**PURE***/React.createElement("span", {
 style: {
 fontSize: 11,
 minWidth: 128,
@@ -907,8 +907,8 @@ paddingLeft: 8,
 borderLeft: `2px solid ${selJ.color}`,
 color: selJ.color
 }
-}, selJ.label, “ \u2014 “, sel.bi + 1, “\u62CD\u76EE”), /*#**PURE***/React.createElement(“input”, {
-type: “range”,
+}, selJ.label, " \u2014 ", sel.bi + 1, "\u62CD\u76EE"), /*#**PURE***/React.createElement("input", {
+type: "range",
 min: -180,
 max: 180,
 step: 1,
@@ -918,32 +918,32 @@ style: {
 width: 180,
 accentColor: selJ.color
 }
-}), /*#**PURE***/React.createElement(“input”, {
-type: “number”,
+}), /*#**PURE***/React.createElement("input", {
+type: "number",
 min: -180,
 max: 180,
 value: selVal,
 onChange: e => setAngle(sel.bi, selJ.id, +e.target.value),
 style: {
 width: 62,
-background: “#040710”,
+background: "#040710",
 border: `1px solid ${selJ.color}`,
 color: selJ.color,
-fontFamily: “inherit”,
+fontFamily: "inherit",
 fontSize: 13,
-padding: “3px 6px”,
+padding: "3px 6px",
 borderRadius: 4,
-textAlign: “right”
+textAlign: "right"
 }
-}), /*#**PURE***/React.createElement(“span”, {
+}), /*#**PURE***/React.createElement("span", {
 style: {
 color: selJ.color,
 fontSize: 12
 }
-}, “\xB0”))));
+}, "\xB0"))));
 }
 
-const root = ReactDOM.createRoot(document.getElementById(‘root’));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(React.createElement(App));
 })();
 </script>
