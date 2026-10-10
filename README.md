@@ -13,6 +13,7 @@
 | 🚗 ぶんぶんドライブ | [bunbun-drive/](bunbun-drive/) | ゲーム | タップや ← → キーで車線を変えて、障害物をよけながら走るドライブゲーム。 |
 | 🏃 モチまるダッシュ | [mochimaru-dash/](mochimaru-dash/) | ゲーム | モチまるがジャンプで障害物を飛び越えて走るアクションゲーム。長押しで高くジャンプ。 |
 | 👗 にこにこブティック | [niconico-boutique/](niconico-boutique/) | ゲーム | おきゃくさんの おねがいに あわせて ふくや こものを えらぶ、おみせやさんごっこゲーム。 |
+| ⚽ ナイターPK戦 | [pk-soccer/](pk-soccer/) | ゲーム | ナイター中継風のPK戦。キッカーではタイミングよく蹴って狙い、キーパーではゴールをタップして飛びつく。 |
 | 💃 Dance Choreographer | [dance/](dance/) | ビジュアル | 肩・肘・股関節・膝の角度を拍ごとに設定して、棒人間のダンスを振り付け。GIFで書き出せる。 |
 
 ## 使い方
@@ -36,6 +37,7 @@ open bingo/index.html
 ├── bunbun-drive/index.html
 ├── mochimaru-dash/index.html
 ├── niconico-boutique/index.html
+├── pk-soccer/index.html
 └── dance/index.html
 ```
 
