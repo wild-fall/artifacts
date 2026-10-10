@@ -1,0 +1,445 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>にこにこブティック</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: awning header on top, customer stage and clothing shelf side by side (stacked on phones). Sticker-style chunky outlines throughout. */
+:root{
+  --sky:#D9F2EC; --floor:#BFE6DC; --paper:#FFFFFF; --ink:#2B2A5C; --ink-soft:#6A6996;
+  --pink:#FF7FA3; --sun:#FFD23F; --mint:#3DBE7B; --shade:#EEF0FA;
+  --display:"Mochiy Pop One","Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
+  --body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--sky);color:var(--ink);font-family:var(--body);font-weight:700;font-size:17px;line-height:1.5}
+.app{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 24px;display:flex;flex-direction:column;gap:14px}
+header{
+  background:repeating-linear-gradient(90deg,var(--pink) 0 40px,var(--paper) 40px 80px);
+  padding:14px 14px 32px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 20px) no-repeat,radial-gradient(circle at 50% 0,#000 19.5px,transparent 20px) bottom left/40px 20px repeat-x;
+          mask:linear-gradient(#000 0 0) top/100% calc(100% - 20px) no-repeat,radial-gradient(circle at 50% 0,#000 19.5px,transparent 20px) bottom left/40px 20px repeat-x;
+  margin-inline:-16px;
+}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,5vw,28px);margin:0;background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:4px 18px;box-shadow:0 4px 0 var(--ink);letter-spacing:.04em}
+.hud{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:3px 12px;font-size:14px;white-space:nowrap;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.coin{width:16px;height:16px;border-radius:50%;background:var(--sun);border:2.5px solid var(--ink);display:inline-block;flex:none}
+main{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:760px){main{grid-template-columns:1fr 1fr;align-items:start}}
+.stage{position:relative;background:linear-gradient(var(--paper) 0 78%,var(--floor) 78%);border:3px solid var(--ink);border-radius:26px;padding:14px;display:flex;flex-direction:column;gap:6px;overflow:hidden;min-width:0}
+.bubble{position:relative;background:var(--sun);border:3px solid var(--ink);border-radius:22px;padding:10px 16px;font-size:clamp(17px,4.4vw,21px);min-height:3.4em;display:flex;flex-direction:column;justify-content:center}
+.bubble small{font-size:13px}
+.bubble em{font-style:normal;font-size:14px;display:flex;align-items:center;gap:6px;margin-top:2px}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-13px;width:20px;height:20px;background:var(--sun);border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+.who{display:block;width:min(100%,250px);margin:6px auto 0}
+.who.in{animation:walk .5s ease-out}
+.who.joy{animation:hop .5s ease-in-out 2}
+@keyframes walk{from{transform:translateX(60%);opacity:0}to{transform:none;opacity:1}}
+@keyframes hop{50%{transform:translateY(-16px)}}
+.star{position:absolute;top:40%;left:50%;font-size:26px;color:var(--sun);-webkit-text-stroke:2px var(--ink);pointer-events:none;animation:fly 1s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(200deg);opacity:0}}
+.shelf,.shop{background:var(--paper);border:3px solid var(--ink);border-radius:26px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.shelf.done .pick{opacity:.4;pointer-events:none}
+.pick{display:flex;flex-direction:column;gap:12px}
+.row{display:grid;gap:8px}
+.tabs{grid-template-columns:repeat(5,1fr)}
+.shapes{grid-template-columns:repeat(4,1fr)}
+.pats{grid-template-columns:repeat(3,1fr)}
+.colors{grid-template-columns:repeat(auto-fill,minmax(42px,1fr))}
+button{font:inherit;color:var(--ink);cursor:pointer;border:3px solid var(--ink);border-radius:16px;background:var(--paper);box-shadow:0 4px 0 var(--ink);min-height:50px;padding:4px;transition:transform .08s,box-shadow .08s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
+button:focus-visible{outline:4px solid var(--pink);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default;box-shadow:0 4px 0 var(--ink);transform:none}
+.tabs button{font-size:12.5px;line-height:1.2;background:var(--shade);padding:4px 1px}
+.tabs button[aria-pressed=true]{background:var(--pink)}
+.shapes button,.pats button{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;font-size:11.5px;line-height:1.2;padding:6px 2px}
+.shapes button svg{width:100%;height:46px}
+.pats button svg{width:44px;height:26px}
+.shapes button[aria-pressed=true],.pats button[aria-pressed=true]{background:var(--sun)}
+.shapes .none{justify-content:center;font-size:14px;background:var(--shade)}
+.colors button{aspect-ratio:1;min-height:0;border-radius:50%;background:var(--c);padding:0;max-width:56px;width:100%;justify-self:center}
+.colors button[aria-pressed=true]{outline:4px solid var(--ink);outline-offset:3px}
+.go{font-family:var(--display);font-weight:400;font-size:22px;background:var(--mint);min-height:62px;border-radius:20px;letter-spacing:.06em}
+.go.next{background:var(--pink)}
+.label{font-size:13px;color:var(--ink-soft);margin:0 0 -6px}
+.shopbtn{position:relative;min-height:40px;border-radius:999px;padding:2px 16px;font-size:15px;background:var(--sun)}
+.shopbtn.dot::after{content:"";position:absolute;top:-6px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--pink);border:3px solid var(--ink)}
+.shop h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
+.shop p{margin:0;font-size:14px;color:var(--ink-soft)}
+.goods{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.good{border:3px solid var(--ink);border-radius:18px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--shade);font-size:13px;text-align:center;line-height:1.3}
+.good svg{width:100%;height:56px}
+.good button{width:100%;min-height:42px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--mint)}
+.good button:disabled{background:var(--paper)}
+.wx{position:absolute;left:12px;top:46%;width:64px;height:64px}
+.who{position:relative;z-index:1}
+.walls{grid-template-columns:repeat(4,1fr)}
+.walls button[aria-pressed=true]{outline:4px solid var(--ink);outline-offset:3px}
+.swatch{width:100%;height:56px;border-radius:10px;border:3px solid var(--ink)}
+.reg{display:flex;flex-direction:column;gap:12px}
+.display{background:var(--ink);color:#B9FFD9;font-family:var(--display);font-size:28px;text-align:right;border-radius:14px;padding:8px 16px;font-variant-numeric:tabular-nums}
+.scans{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}
+.scans button{display:flex;flex-direction:column;align-items:center;font-size:12.5px;padding:6px 2px;gap:2px}
+.scans button svg{width:100%;height:46px}
+.scans button.ok{background:var(--mint)}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.album figure{margin:0;border:3px solid var(--ink);border-radius:18px;background:var(--shade);padding:6px;text-align:center;font-size:13px;line-height:1.3}
+.album svg{width:100%;height:auto;display:block}
+.hearts{color:var(--pink);-webkit-text-stroke:1px var(--ink);letter-spacing:2px;font-size:1.25em}
+.favdot{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink);display:inline-block;vertical-align:-2px;background:var(--c)}
+@media(prefers-reduced-motion:reduce){.who.in,.who.joy,.star{animation:none}.star{display:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="defs"></defs></svg>
+<div class="app">
+  <header>
+    <h1>にこにこ ブティック</h1>
+    <div class="hud">
+      <span class="chip" id="day"></span>
+      <span class="chip" id="rank"></span>
+      <span class="chip"><i class="coin"></i><span id="coins"></span></span>
+      <button class="shopbtn" id="shopbtn">しいれ</button>
+    </div>
+  </header>
+  <main id="game">
+    <section class="stage" id="stage">
+      <div class="bubble" id="bubble" aria-live="polite"></div>
+      <svg class="wx" id="wx" viewBox="0 0 60 60" aria-hidden="true"></svg>
+      <svg class="who" id="who" viewBox="20 -28 160 308" role="img" aria-label="おきゃくさん"></svg>
+    </section>
+    <section class="shelf" id="shelf">
+      <div class="pick">
+        <p class="label">どこを えらぶ？</p>
+        <div class="row tabs" id="tabs"></div>
+        <p class="label">かたち</p>
+        <div class="row shapes" id="shapes"></div>
+        <p class="label" id="patlabel">がら</p>
+        <div class="row pats" id="pats"></div>
+        <p class="label">いろ</p>
+        <div class="row colors" id="colors"></div>
+      </div>
+      <div class="reg" id="reg" hidden>
+        <p class="label">レジ：ふくを タッチして ピッ！</p>
+        <div class="display" id="regtotal"></div>
+        <div class="row scans" id="scans"></div>
+      </div>
+      <button class="go" id="go">どうぞ！</button>
+    </section>
+  </main>
+  <section class="shop" id="shop" hidden>
+    <h2>しいれ</h2>
+    <p>コインで あたらしい しなものを ふやそう。ふやすと おきゃくさんの おねがいも ふえるよ。</p>
+    <div class="goods" id="goods"></div>
+    <p class="label">かべがみを えらぶ</p>
+    <div class="row walls" id="walls"></div>
+  </section>
+  <section class="shop" id="end" hidden>
+    <h2 id="endtitle"></h2>
+    <p id="endsum"></p>
+    <div class="album" id="album"></div>
+    <button class="go next" id="nextday">つぎの ひへ</button>
+  </section>
+</div>
+
+<script>
+const INK='#2B2A5C';
+const S=`stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+const COLORS=[
+  {n:'あか',adj:'あかい',h:'#F2545B'},{n:'あお',adj:'あおい',h:'#3D8BFD'},{n:'きいろ',adj:'きいろい',h:'#FFD23F'},
+  {n:'みどり',adj:'みどりの',h:'#3DBE7B'},{n:'ピンク',adj:'ピンクの',h:'#FF8FB8'},{n:'むらさき',adj:'むらさきの',h:'#9B6BDF'},
+  {n:'オレンジ',adj:'オレンジの',h:'#FF9A3D'},{n:'みずいろ',adj:'みずいろの',h:'#5CC8F0'}];
+const PATS=[{n:'むじ'},{n:'しましま',adj:'しましまの'},{n:'みずたま',adj:'みずたまの'}];
+const CATS={
+  hat:{name:'ぼうし',box:['28 -6 148 70'],shapes:['キャップ','むぎわら ぼうし','ニット ぼうし']},
+  top:{name:'ふく',box:['36 96 128 126'],shapes:['Tシャツ','パーカー','ワンピース']},
+  bottom:{name:'スカート ズボン',short:'スカートか ズボン',box:['44 168 112 92'],shapes:['ズボン','スカート','はんズボン']},
+  shoes:{name:'くつ',box:['62 222 76 56'],shapes:['スニーカー','ながぐつ','サンダル']},
+  acc:{name:'こもの',box:['96 108 60 96','62 46 76 40','64 94 72 58'],shapes:['かばん','めがね','マフラー']}};
+const ORDER=['hat','top','bottom','shoes'], TABS=[...ORDER,'acc'];
+const ANIMALS=[
+  {name:'ゆいちゃん',skin:'#FBD9BF',hair:'#3A2A22',style:'twin'},{name:'そうたくん',skin:'#F2C29B',hair:'#1F1F2E',style:'spiky'},
+  {name:'みおちゃん',skin:'#D9A070',hair:'#2A1C18',style:'bob'},{name:'はるくん',skin:'#FBD9BF',hair:'#6B4226',style:'short'},
+  {name:'りこちゃん',skin:'#F2C29B',hair:'#C98A3C',style:'bun'},{name:'けんとくん',skin:'#A9714B',hair:'#1F1F2E',style:'short'},
+  {name:'さくらちゃん',skin:'#FBD9BF',hair:'#6B4226',style:'bob'},{name:'れんくん',skin:'#D9A070',hair:'#3A2A22',style:'spiky'}];
+const RANKS=[[0,'みならい'],[5,'てんいんさん'],[15,'てんちょう'],[30,'カリスマ てんちょう']];
+const boxOf=(cat,s)=>CATS[cat].box[s]||CATS[cat].box[0];
+const fillOf=(c,p)=>p?`url(#pt${p}-${c})`:COLORS[c].h;
+
+document.getElementById('defs').innerHTML=COLORS.map((c,i)=>
+  `<pattern id="pt1-${i}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${c.h}"/><rect width="12" height="5" fill="#fff" opacity=".8"/></pattern>`+
+  `<pattern id="pt2-${i}" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="${c.h}"/><circle cx="3.5" cy="3.5" r="2.6" fill="#fff" opacity=".9"/><circle cx="10.5" cy="10.5" r="2.6" fill="#fff" opacity=".9"/></pattern>`).join('');
+
+function sleeves(c,x,y){
+  const d=`M72 122L${x} ${y}M128 122L${200-x} ${y}`;
+  return `<path d="${d}" fill="none" stroke="${INK}" stroke-width="27" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="21" stroke-linecap="round"/>`;
+}
+function item(cat,s,c){
+  if(cat==='hat'){
+    if(s===0)return `<rect x="126" y="40" width="46" height="12" rx="6" fill="${c}" ${S}/><path d="M58 50Q58 12 100 12Q142 12 142 50Z" fill="${c}" ${S}/><circle cx="100" cy="12" r="4" fill="#fff" ${S}/>`;
+    if(s===1)return `<ellipse cx="100" cy="46" rx="68" ry="10" fill="${c}" ${S}/><path d="M68 46Q68 8 100 8Q132 8 132 46Z" fill="${c}" ${S}/><path d="M69 36h62v9H69Z" fill="#fff" ${S}/>`;
+    return `<path d="M56 50Q56 8 100 8Q144 8 144 50Z" fill="${c}" ${S}/><rect x="52" y="40" width="96" height="15" rx="7.5" fill="#fff" ${S}/><circle cx="100" cy="4" r="9" fill="#fff" ${S}/>`;
+  }
+  if(cat==='top'){
+    if(s===0)return sleeves(c,56,144)+`<rect x="66" y="110" width="68" height="72" rx="12" fill="${c}" ${S}/><path d="M88 111Q100 123 112 111" fill="none" ${S}/>`;
+    if(s===1)return `<path d="M68 116Q100 88 132 116Q100 132 68 116Z" fill="${c}" ${S}/>`+sleeves(c,50,170)+`<rect x="66" y="110" width="68" height="80" rx="12" fill="${c}" ${S}/><rect x="84" y="162" width="32" height="16" rx="6" fill="none" ${S}/><path d="M93 118v16M107 118v16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
+    return sleeves(c,56,144)+`<path d="M70 110h60l22 104H48Z" fill="${c}" ${S}/><path d="M56 202h88" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/><path d="M88 111Q100 123 112 111" fill="none" ${S}/>`;
+  }
+  if(cat==='bottom'){
+    if(s===0)return `<path d="M70 176h60v76h-26l-4-44-4 44H70Z" fill="${c}" ${S}/>`;
+    if(s===1)return `<path d="M72 176h56l18 46H54Z" fill="${c}" ${S}/>`;
+    return `<path d="M70 176h60v42h-26l-4-14-4 14H70Z" fill="${c}" ${S}/>`;
+  }
+  if(cat==='acc'){
+    if(s===0)return `<path d="M104 116L134 172" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M104 116L134 172" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="114" y="168" width="36" height="28" rx="7" fill="${c}" ${S}/><path d="M114 178h36" fill="none" ${S}/><circle cx="132" cy="178" r="3.5" fill="#fff" ${S}/>`;
+    if(s===1)return `<path d="M95 66h10" fill="none" stroke="${INK}" stroke-width="4"/><circle cx="84" cy="66" r="12" fill="#fff" fill-opacity=".35" stroke="${INK}" stroke-width="7"/><circle cx="116" cy="66" r="12" fill="#fff" fill-opacity=".35" stroke="${INK}" stroke-width="7"/><circle cx="84" cy="66" r="12" fill="none" stroke="${c}" stroke-width="3.5"/><circle cx="116" cy="66" r="12" fill="none" stroke="${c}" stroke-width="3.5"/>`;
+    return `<rect x="106" y="108" width="15" height="38" rx="5" fill="${c}" ${S}/><rect x="72" y="100" width="56" height="17" rx="8.5" fill="${c}" ${S}/>`;
+  }
+  return [85,115].map(x=>{
+    if(s===0)return `<path d="M${x-15} 272v-10q0-8 8-8h8q14 0 14 12v6Z" fill="${c}" ${S}/><circle cx="${x+7}" cy="263" r="3" fill="#fff"/>`;
+    if(s===1)return `<path d="M${x-11} 272v-42h20v24q9 2 9 11v7Z" fill="${c}" ${S}/>`;
+    return `<path d="M${x-15} 269h30" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><path d="M${x-15} 269h30" stroke="${c}" stroke-width="5" stroke-linecap="round"/><path d="M${x-9} 265q9-16 18 0" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M${x-9} 265q9-16 18 0" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+  }).join('');
+}
+const worn=(o,k)=>item(k,o[k].s,fillOf(o[k].c,o[k].p));
+function customer(a,o,happy){
+  const f='#fff', ef=a.skin, hc=a.hair; let g='';
+  if(a.style==='bob')g+=`<path d="M52 70Q48 18 100 18Q152 18 148 70V102Q148 112 138 112H62Q52 112 52 102Z" fill="${hc}" ${S}/>`;
+  if(a.style==='twin')g+=`<circle cx="48" cy="86" r="15" fill="${hc}" ${S}/><circle cx="152" cy="86" r="15" fill="${hc}" ${S}/>`;
+  if(a.style==='bun')g+=`<circle cx="100" cy="18" r="15" fill="${hc}" ${S}/>`;
+  g+=`<circle cx="57" cy="72" r="7" fill="${ef}" ${S}/><circle cx="143" cy="72" r="7" fill="${ef}" ${S}/>`;
+  if(a.ear==='bear')g+=`<circle cx="66" cy="32" r="14" fill="${ef}" ${S}/><circle cx="134" cy="32" r="14" fill="${ef}" ${S}/>`;
+  if(a.ear==='rabbit')g+=`<ellipse cx="80" cy="8" rx="11" ry="30" fill="${f}" ${S}/><ellipse cx="120" cy="8" rx="11" ry="30" fill="${f}" ${S}/><ellipse cx="80" cy="10" rx="4" ry="18" fill="#FF8FB8"/><ellipse cx="120" cy="10" rx="4" ry="18" fill="#FF8FB8"/>`;
+  if(a.ear==='cat')g+=`<path d="M62 52L58 12L94 30Z" fill="${f}" ${S}/><path d="M138 52L142 12L106 30Z" fill="${f}" ${S}/>`;
+  const arm='M72 122L50 172M128 122L150 172';
+  g+=`<path d="${arm}" fill="none" stroke="${INK}" stroke-width="19" stroke-linecap="round"/><path d="${arm}" fill="none" stroke="${ef}" stroke-width="13" stroke-linecap="round"/>`;
+  g+=`<rect x="76" y="194" width="18" height="70" rx="9" fill="${ef}" ${S}/><rect x="106" y="194" width="18" height="70" rx="9" fill="${ef}" ${S}/>`;
+  g+=`<ellipse cx="85" cy="265" rx="14" ry="8" fill="${ef}" ${S}/><ellipse cx="115" cy="265" rx="14" ry="8" fill="${ef}" ${S}/>`;
+  g+=`<rect x="68" y="110" width="64" height="96" rx="28" fill="${f}" ${S}/>`;
+  if(o.bottom)g+=worn(o,'bottom');
+  if(o.shoes)g+=worn(o,'shoes');
+  if(o.top)g+=worn(o,'top');
+  if(o.acc&&o.acc.s===0)g+=worn(o,'acc');
+  g+=`<circle cx="100" cy="68" r="44" fill="${ef}" ${S}/>`;
+  g+=`<path d="${a.style==='spiky'?'M55 64Q52 20 100 20Q148 20 145 64L130 46L116 56L100 42L84 56L70 46Z':'M55 64Q52 20 100 20Q148 20 145 64Q126 40 100 44Q74 40 55 64Z'}" fill="${hc}" ${S}/>`;
+  if(a.panda)g+=`<ellipse cx="84" cy="66" rx="10" ry="12" fill="${INK}"/><ellipse cx="116" cy="66" rx="10" ry="12" fill="${INK}"/>`;
+  const eye=a.panda?'#fff':INK;
+  g+=happy?`<path d="M78 67q6-8 12 0M110 67q6-8 12 0" fill="none" stroke="${eye}" stroke-width="3.5" stroke-linecap="round"/>`
+          :`<circle cx="84" cy="66" r="4.5" fill="${eye}"/><circle cx="116" cy="66" r="4.5" fill="${eye}"/>`;
+  g+=`<circle cx="70" cy="84" r="7" fill="#FF8FB8" opacity=".6"/><circle cx="130" cy="84" r="7" fill="#FF8FB8" opacity=".6"/><path d="M98 77q2 2 4 0" fill="none" ${S}/>`;
+  g+=happy?`<path d="M90 86Q100 102 110 86Z" fill="#E5484D" ${S}/>`:`<path d="M92 87Q100 94 108 87" fill="none" ${S}/>`;
+  if(o.acc&&o.acc.s>0)g+=worn(o,'acc');
+  if(o.hat)g+=worn(o,'hat');
+  return g;
+}
+
+/* ---------- セーブデータ ---------- */
+const BASE=['c:0','c:1','c:2','c:3','p:0','s:acc:0'].concat(ORDER.flatMap(k=>[`s:${k}:0`,`s:${k}:1`]));
+const GOODS=[
+  ...ORDER.map(k=>({id:`s:${k}:2`,price:30,name:CATS[k].shapes[2],cat:k,s:2})),
+  {id:'s:acc:1',price:30,name:'めがね',cat:'acc',s:1},{id:'s:acc:2',price:30,name:'マフラー',cat:'acc',s:2},
+  ...[4,5,6,7].map(i=>({id:`c:${i}`,price:20,name:COLORS[i].n+'の いろ',color:i})),
+  {id:'p:1',price:40,name:'しましまの がら',pat:1},{id:'p:2',price:40,name:'みずたまの がら',pat:2},
+  {id:'w:1',price:50,name:'みずたまの かべがみ',wall:1},{id:'w:2',price:50,name:'しましまの かべがみ',wall:2},{id:'w:3',price:50,name:'ほしの かべがみ',wall:3}];
+BASE.push('w:0');
+const WALLS=['#fff','radial-gradient(circle,#FFD9E4 5px,transparent 5.5px) 0 0/28px 28px #fff','repeating-linear-gradient(90deg,#FFF3C4 0 18px,#fff 18px 36px)','radial-gradient(circle,#fff 2.5px,transparent 3px) 0 0/24px 24px #D9D4F7'];
+const WX=['はれ','はれ','あめ','ゆき'];
+const PRICE={hat:300,top:500,bottom:400,shoes:400,acc:200};
+function wxSvg(w){
+  const sky={'はれ':'#BFE9FF','あめ':'#B8C4DA','ゆき':'#DCE8F5'}[w];
+  let g=`<rect x="4" y="4" width="52" height="52" rx="8" fill="${sky}" ${S}/>`;
+  if(w==='はれ')g+=`<circle cx="40" cy="22" r="9" fill="#FFD23F" ${S}/>`;
+  if(w==='あめ')g+=`<path d="M16 14l-3 8M30 12l-3 8M44 14l-3 8M22 36l-3 8M36 34l-3 8M48 38l-3 8" fill="none" stroke="#3D8BFD" stroke-width="3" stroke-linecap="round"/>`;
+  if(w==='ゆき')g+=[[16,16],[32,12],[46,20],[22,38],[38,34],[48,44],[12,48]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.2" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`).join('');
+  return g+`<path d="M30 4v52M4 30h52" fill="none" ${S}/>`;
+}
+let save={coins:0,served:0,owned:[],day:1,wall:0,friends:{}};
+try{const j=JSON.parse(localStorage.getItem('boutique2')||'null');if(j&&typeof j==='object'){save.coins=+j.coins||0;save.served=+j.served||0;save.owned=Array.isArray(j.owned)?j.owned:[];save.day=+j.day||1;save.wall=+j.wall||0;if(j.friends&&typeof j.friends==='object')save.friends=j.friends}
+  else save.served=+localStorage.getItem('stamps')||0}catch(e){}
+const store=()=>{try{localStorage.setItem('boutique2',JSON.stringify(save))}catch(e){}};
+const has=id=>BASE.includes(id)||save.owned.includes(id);
+const ownShapes=k=>[0,1,2].filter(i=>has(`s:${k}:${i}`));
+const ownColors=()=>COLORS.map((_,i)=>i).filter(i=>has('c:'+i));
+const ownPats=()=>[0,1,2].filter(i=>has('p:'+i));
+const rankOf=n=>RANKS.filter(r=>n>=r[0]).pop();
+
+/* ---------- おきゃくさんの おねがい ---------- */
+const rnd=n=>Math.floor(Math.random()*n), pick=a=>a[rnd(a.length)];
+const label=c=>(c.pat?PATS[c.pat].adj+' ':'')+(c.color!=null?COLORS[c.color].adj+' ':'')+(c.shape!=null?CATS[c.cat].shapes[c.shape]:(CATS[c.cat].short||CATS[c.cat].name));
+const THEMES=[
+  {t:'あめが ふってるの。ぬれない くつは あるかな？',c:[{cat:'shoes',shape:1}]},
+  {t:'さむいよ〜。あたまが あったかく なる ぼうしは ある？',c:[{cat:'hat',shape:2}]},
+  {t:'うみに いくんだ！ すずしい くつと ぼうしを ください',c:[{cat:'shoes',shape:2},{cat:'hat',shape:1}]},
+  {t:'かけっこ するよ！ はしりやすい くつが いいな',c:[{cat:'shoes',shape:0}]},
+  {t:'パーティーに いくの。すてきな ワンピースを きたいな',c:[{cat:'top',shape:2}]},
+  {t:'ゆきあそび するんだ。あったかい ふくと ながぐつを ください',c:[{cat:'top',shape:1},{cat:'shoes',shape:1}]},
+  {t:'おつかいに いくよ。にもつを いれる ものは ある？',c:[{cat:'acc',shape:0}]},
+  {t:'ほんを よむのが すき。かしこく みえる こものが ほしいな',c:[{cat:'acc',shape:1}]},
+  {t:'くびが さむいの。くびに まく ものを ください',c:[{cat:'acc',shape:2}]},
+  {t:'おひさまが まぶしいな。かげに なる ぼうしは ある？',c:[{cat:'hat',shape:1}]}];
+[['あめ',[0]],['ゆき',[1,5,8]],['はれ',[2,9]]].forEach(([w,is])=>is.forEach(i=>THEMES[i].w=w));
+function simple(level,cat){
+  cat=cat||pick(level?TABS:ORDER); const c={cat};
+  const k=cat==='acc'?2:(level===0?rnd(2):2);
+  if(k!==1)c.color=pick(ownColors());
+  if(k!==0)c.shape=pick(ownShapes(cat));
+  const ps=ownPats().filter(p=>p>0);
+  if(level&&ps.length&&cat!=='acc'&&rnd(3)===0)c.pat=pick(ps);
+  return c;
+}
+function theme(){
+  const ok=THEMES.filter(t=>(!t.w||t.w===st.weather)&&t.c.every(c=>has(`s:${c.cat}:${c.shape}`)));
+  const wx=ok.filter(t=>t.w);
+  return wx.length&&rnd(3)?pick(wx):pick(ok);
+}
+function two(){
+  const cats=TABS.slice().sort(()=>Math.random()-.5);const a=simple(1,cats[0]),b=simple(1,cats[1]);
+  return{t:label(a)+'と '+label(b)+'を ください',c:[a,b]};
+}
+function makeRequest(n){
+  if(n<2){const c=simple(0);return{t:label(c)+'が ほしいな',c:[c]}}
+  const r=rnd(n<5?3:7);
+  if(r===0){const c=simple(1);return{t:label(c)+'が いいな',c:[c]}}
+  if(r===1||r===3)return theme();
+  if(r===2||r===4)return two();
+  if(r===5)return{t:'ぜんぶ おなじ いろで そろえたいな！',c:[{same:true}]};
+  const col=pick(ownColors());return{t:COLORS[col].n+'が だいすき！ '+COLORS[col].n+'を ふたつ きたいな',c:[{twoOf:col}]};
+}
+function failing(req,o){
+  const w=TABS.filter(k=>o[k]);
+  for(const c of req.c){
+    if(c.same){if(w.length<3)return 'みっつ いじょう きせてね';
+      if(new Set(w.map(k=>o[k].c)).size>1)return 'いろを ぜんぶ おなじに してね';continue}
+    if(c.twoOf!=null){if(w.filter(k=>o[k].c===c.twoOf).length<2)return COLORS[c.twoOf].n+'が ふたつ あると うれしいな';continue}
+    const x=o[c.cat];
+    if(!x||(c.shape!=null&&x.s!==c.shape)||(c.color!=null&&x.c!==c.color)||(c.pat&&x.p!==c.pat))return label(c)+'が いいな';
+  }
+  return null;
+}
+
+/* ---------- ゲーム ---------- */
+let st={animal:pick(ANIMALS),req:null,o:{},cat:'hat',color:0,done:false,msg:null,pay:0,shop:false,fav:0,hearts:0,tip:'',end:false,today:[],dayCoins:0};
+const hearts=n=>'♥'.repeat(n)+'♡'.repeat(3-n);
+function setFav(){const q=st.req.c[0];st.fav=q.twoOf!=null?q.twoOf:pick(ownColors())}
+const $=id=>document.getElementById(id);
+let ac; function beep(f,d,delay){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();
+  const t=ac.currentTime+(delay||0);o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d)}catch(e){}}
+function btn(parent,text,pressed,fn){const el=document.createElement('button');if(text)el.textContent=text;
+  if(pressed!=null)el.setAttribute('aria-pressed',pressed);el.onclick=fn;parent.appendChild(el);return el}
+
+function renderHud(){
+  $('rank').textContent=rankOf(save.served)[1]+'・'+save.served+'にん';
+  $('day').textContent=save.day+'にちめ・'+st.weather+' '+st.today.length+'/5';
+  $('coins').textContent=save.coins;
+  const left=GOODS.filter(g=>!has(g.id));
+  $('shopbtn').textContent=st.shop?'おみせに もどる':'しいれ';
+  $('shopbtn').classList.toggle('dot',!st.shop&&left.some(g=>g.price<=save.coins));
+}
+function render(){
+  renderHud();
+  $('game').hidden=st.shop||st.end;$('shop').hidden=!st.shop;$('end').hidden=st.shop||!st.end;
+  if(st.shop){renderShop();return}
+  if(st.end){renderEnd();return}
+  $('who').innerHTML=customer(st.animal,st.o,st.done);
+  $('wx').innerHTML=wxSvg(st.weather);
+  $('stage').style.background='linear-gradient(transparent 0 78%,#BFE6DC 78%),'+(WALLS[save.wall]||WALLS[0]);
+  const b=$('bubble');b.innerHTML='';
+  const who=document.createElement('small');who.textContent=st.animal.name+'（なかよし ♥'+(save.friends[st.animal.name]||0)+'）すきな いろ ';
+  const fd=document.createElement('i');fd.className='favdot';fd.style.setProperty('--c',COLORS[st.fav].h);fd.setAttribute('aria-label',COLORS[st.fav].n);who.appendChild(fd);b.appendChild(who);
+  b.appendChild(document.createTextNode(st.msg||st.req.t));
+  if(st.done){const e=document.createElement('em');e.innerHTML='<span class="hearts">'+hearts(st.hearts)+'</span><i class="coin"></i>';e.appendChild(document.createTextNode('+'+st.pay));b.appendChild(e);
+    if(st.tip){const t=document.createElement('small');t.textContent=st.tip;b.appendChild(t)}}
+  $('shelf').classList.toggle('done',st.done);
+  const rg=st.reg;document.querySelector('.pick').hidden=!!rg;$('reg').hidden=!rg;
+  if(rg){$('regtotal').textContent=rg.total+'えん';const sc=$('scans');sc.innerHTML='';
+    rg.items.forEach(k=>{const w=st.o[k],ok=rg.scanned.includes(k);
+      const el=btn(sc,'',null,()=>{if(ok||st.done)return;rg.scanned.push(k);rg.total+=PRICE[k];beep(1400,.09);render()});
+      el.innerHTML=`<svg viewBox="${boxOf(k,w.s)}" aria-hidden="true">${item(k,w.s,fillOf(w.c,w.p))}</svg>`;
+      const s=document.createElement('span');s.textContent=ok?PRICE[k]+'えん':'ピッ する';el.appendChild(s);if(ok)el.className='ok'})}
+  const cat=st.cat, cur=st.o[cat], cc=cur?cur.c:st.color, cp=cur?cur.p:0;
+  $('tabs').innerHTML='';
+  TABS.forEach(k=>btn($('tabs'),CATS[k].name,k===cat,()=>{st.cat=k;if(st.o[k])st.color=st.o[k].c;beep(520,.08);render()}));
+  $('shapes').innerHTML='';
+  ownShapes(cat).forEach(i=>{const el=btn($('shapes'),'',!!cur&&cur.s===i,()=>{st.o[cat]={s:i,c:cc,p:cp};st.msg=null;beep(660,.08);render()});
+    el.innerHTML=`<svg viewBox="${boxOf(cat,i)}" aria-hidden="true">${item(cat,i,fillOf(cc,cp))}</svg>`;
+    const s=document.createElement('span');s.textContent=CATS[cat].shapes[i];el.appendChild(s)});
+  btn($('shapes'),'ぬぐ',null,()=>{delete st.o[cat];st.msg=null;beep(330,.08);render()}).className='none';
+  const ps=ownPats();$('pats').innerHTML='';$('pats').hidden=$('patlabel').hidden=ps.length<2;
+  ps.forEach(p=>{const el=btn($('pats'),'',cp===p,()=>{st.o[cat]={s:cur?cur.s:ownShapes(cat)[0],c:cc,p};st.msg=null;beep(700,.08);render()});
+    el.innerHTML=`<svg viewBox="0 0 44 26" aria-hidden="true"><rect x="2" y="2" width="40" height="22" rx="6" fill="${fillOf(cc,p)}" ${S}/></svg>`;
+    const s=document.createElement('span');s.textContent=PATS[p].n;el.appendChild(s)});
+  $('colors').innerHTML='';
+  ownColors().forEach(i=>{const el=btn($('colors'),'',cc===i,()=>{st.color=i;st.o[cat]={s:cur?cur.s:ownShapes(cat)[0],c:i,p:cp};st.msg=null;beep(780,.08);render()});
+    el.style.setProperty('--c',COLORS[i].h);el.setAttribute('aria-label',COLORS[i].n)});
+  const go=$('go');go.textContent=st.done?(st.today.length>=5?'おみせを しめる':'つぎの おきゃくさん'):rg?'おかいけい！':'どうぞ！';
+  go.disabled=!!rg&&!st.done&&rg.scanned.length<rg.items.length;go.classList.toggle('next',st.done);
+}
+function renderShop(){
+  const box=$('goods');box.innerHTML='';
+  const wl=$('walls');wl.innerHTML='';
+  WALLS.forEach((w,i)=>{if(!has('w:'+i))return;const el=btn(wl,'',save.wall===i,()=>{save.wall=i;store();beep(600,.08);render()});el.style.background=w;el.setAttribute('aria-label','かべがみ '+(i+1))});
+  const left=GOODS.filter(g=>!has(g.id));
+  if(!left.length){const p=document.createElement('p');p.textContent='ぜんぶ そろったよ！ りっぱな おみせに なったね。';box.appendChild(p);return}
+  left.forEach(g=>{
+    const card=document.createElement('div');card.className='good';
+    let pic;
+    if(g.cat)pic=`<svg viewBox="${boxOf(g.cat,g.s)}" aria-hidden="true">${item(g.cat,g.s,COLORS[1].h)}</svg>`;
+    else if(g.wall)pic=`<div class="swatch" style="background:${WALLS[g.wall]}"></div>`;
+    else if(g.color!=null)pic=`<svg viewBox="0 0 60 56" aria-hidden="true"><circle cx="30" cy="28" r="20" fill="${COLORS[g.color].h}" ${S}/></svg>`;
+    else pic=`<svg viewBox="0 0 60 56" aria-hidden="true"><rect x="6" y="8" width="48" height="40" rx="10" fill="${fillOf(4,g.pat)}" ${S}/></svg>`;
+    card.innerHTML=pic;
+    const n=document.createElement('span');n.textContent=g.name;card.appendChild(n);
+    const lack=g.price-save.coins;
+    const b=btn(card,'',null,()=>{if(save.coins<g.price)return;save.coins-=g.price;save.owned.push(g.id);if(g.wall)save.wall=g.wall;store();[660,880].forEach((f,i)=>beep(f,.15,i*.1));render()});
+    b.innerHTML='<i class="coin"></i>';b.appendChild(document.createTextNode(lack>0?'あと '+lack:g.price+'で かう'));
+    b.disabled=lack>0;
+    box.appendChild(card)});
+}
+function anim(cls){const w=$('who');w.classList.remove('in','joy');void w.getBoundingClientRect();w.classList.add(cls)}
+function newCustomer(){
+  let a;do{a=pick(ANIMALS)}while(a===st.animal);
+  st.animal=a;st.req=makeRequest(save.served);st.o={};st.done=false;st.msg=null;st.reg=null;st.cat=st.req.c[0].cat||'hat';
+  st.color=ownColors()[0];setFav();
+  render();anim('in');
+}
+function renderEnd(){
+  const hs=st.today.reduce((s,t)=>s+t.h,0);
+  $('endtitle').textContent=save.day+'にちめ おしまい';
+  $('endsum').textContent='きょうは 5にんの おきゃくさんが きたよ。ハートは '+hs+'こ、コインは '+st.dayCoins+'まい もらったよ。'+(hs>=13?' だいにんきの おみせだね！':' おつかれさま！');
+  const al=$('album');al.innerHTML='';
+  st.today.forEach(t=>{const f=document.createElement('figure');
+    f.innerHTML=`<svg viewBox="20 -28 160 308" aria-hidden="true">${customer(t.a,t.o,true)}</svg>`;
+    const c=document.createElement('figcaption');c.textContent=t.a.name+' ';
+    const h=document.createElement('span');h.className='hearts';h.textContent=hearts(t.h);c.appendChild(h);f.appendChild(c);al.appendChild(f)});
+}
+$('nextday').onclick=()=>{save.day++;store();st.today=[];st.dayCoins=0;st.end=false;st.weather=pick(WX);beep(660,.12);newCustomer()};
+$('shopbtn').onclick=()=>{st.shop=!st.shop;beep(520,.08);render()};
+$('go').onclick=()=>{
+  if(st.done){beep(520,.1);if(st.today.length>=5){st.end=true;render()}else newCustomer();return}
+  const hint=failing(st.req,st.o);
+  if(hint){st.msg='うーん、'+hint;beep(300,.15);render();return}
+  if(!st.reg){st.reg={items:TABS.filter(k=>st.o[k]),scanned:[],total:0};st.msg='これに する！ おかいけい おねがいします';beep(660,.1);render();return}
+  if(st.reg.scanned.length<st.reg.items.length)return;
+  const full=ORDER.every(k=>st.o[k]), fav=TABS.some(k=>st.o[k]&&st.o[k].c===st.fav);
+  st.hearts=1+(full?1:0)+(fav?1:0);
+  st.pay=5+st.hearts*5+(st.req.c.length>1||st.req.c[0].same?5:0);
+  st.tip=!fav?'すきな いろを つかうと ハートが ふえるよ':!full?'ぼうしから くつまで そろえると ハートが ふえるよ':'';
+  st.today.push({a:st.animal,o:JSON.parse(JSON.stringify(st.o)),h:st.hearts});st.dayCoins+=st.pay;
+  const before=rankOf(save.served)[1];
+  const nm=st.animal.name, f0=save.friends[nm]||0;save.friends[nm]=f0+st.hearts;
+  const gift=Math.floor(save.friends[nm]/10)>Math.floor(f0/10);if(gift){st.pay+=20;st.dayCoins+=20}
+  st.done=true;save.served++;save.coins+=st.pay;store();
+  const after=rankOf(save.served)[1];
+  st.msg=after!==before?'ありがとう！ きょうから きみは「'+after+'」だよ！'
+    :full?pick(['わあ、ぜんしん ぴったり！ ありがとう！','あたまから あしまで すてき！'])
+    :pick(['わあ、ぴったり！ ありがとう！','すてき！ これで おでかけ するね','やったー！ だいすきな ふくだよ']);
+  if(gift)st.msg='いつも ありがとう！ なかよしの しるしに コインを 20まい プレゼント！';
+  render();anim('joy');[523,659,784].forEach((f,i)=>beep(f,.18,i*.12));
+  for(let i=0;i<12;i++){const s=document.createElement('span');s.className='star';s.textContent='★';
+    s.style.setProperty('--x',(Math.random()*280-140)+'px');s.style.setProperty('--y',(Math.random()*-220-20)+'px');
+    $('stage').appendChild(s);setTimeout(()=>s.remove(),1000)}
+};
+st.weather=pick(WX);st.req=makeRequest(save.served);st.cat=st.req.c[0].cat||'hat';setFav();render();
+</script>
+
+</body></html>
